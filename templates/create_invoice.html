@@ -1,0 +1,329 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --brand-blue: #211e48;
+        --brand-orange: #ffc107;
+        --soft-bg: #f8f9fa;
+    }
+
+    .dashboard-wrapper {
+        padding: 1.5rem 0;
+    }
+
+    /* Header Styling */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .page-title {
+        font-weight: 800;
+        color: var(--brand-blue);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Centered Professional Form Card */
+    .form-card {
+        background: white;
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        max-width: 800px;
+        /* Wider to accommodate dynamic rows */
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .form-header {
+        background-color: var(--soft-bg);
+        border-bottom: 1px solid #eee;
+        padding: 1.25rem;
+        font-weight: 800;
+        color: var(--brand-blue);
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        text-align: center;
+    }
+
+    .form-body {
+        padding: 2.5rem 2rem;
+    }
+
+    /* Job Context Summary */
+    .job-context {
+        background: rgba(33, 30, 72, 0.04);
+        border: 1px solid rgba(33, 30, 72, 0.1);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .info-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        color: #888;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+
+    .info-value {
+        font-weight: 700;
+        color: var(--brand-blue);
+        font-size: 0.95rem;
+    }
+
+    /* Input Styling */
+    .form-label {
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control,
+    .form-select,
+    .input-group-text {
+        padding: 0.7rem 0.9rem;
+        font-size: 0.9rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        color: #4a5568;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--brand-orange);
+        box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15);
+    }
+
+    /* Dynamic Part Row Styling */
+    .part-row {
+        background: #fff;
+        border: 1px solid #f1f1f1;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 12px;
+        transition: 0.2s;
+    }
+
+    .btn-remove {
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        border: none;
+        border-radius: 8px;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+    }
+
+    .btn-remove:hover {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-add-part {
+        background: transparent;
+        color: var(--brand-blue);
+        border: 2px dashed #cbd5e0;
+        font-weight: 700;
+        font-size: 0.75rem;
+        padding: 10px;
+        border-radius: 10px;
+        width: 100%;
+        margin-bottom: 2rem;
+        transition: 0.2s;
+    }
+
+    .btn-add-part:hover {
+        border-color: var(--brand-blue);
+        background: #f8fafc;
+    }
+
+    /* Generate Button */
+    .btn-generate {
+        background: var(--brand-blue);
+        color: white;
+        font-weight: 800;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        padding: 1rem;
+        border-radius: 50px;
+        border: none;
+        width: 100%;
+        transition: 0.3s;
+    }
+
+    .btn-generate:hover {
+        background: var(--brand-orange);
+        color: var(--brand-blue);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<div class="dashboard-wrapper container">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="bi bi-receipt"></i> Generate Invoice
+        </h1>
+        <a href="{% url 'service_job_list' %}" class="btn-back text-decoration-none text-muted small fw-bold">
+            <i class="bi bi-arrow-left"></i> Cancel & Exit
+        </a>
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="form-card animate__animated animate__fadeIn">
+        <div class="form-header">
+            Billing for Ticket #{{ job.id|stringformat:"04d" }}
+        </div>
+
+        <div class="form-body">
+
+            <!-- Job Summary Context Box -->
+            <div class="job-context">
+                <div class="row align-items-center">
+                    <div class="col-md-4 mb-3 mb-md-0 border-end">
+                        <div class="info-label">Vehicle Details</div>
+                        <div class="info-value">{{ job.vehicle }}</div>
+                    </div>
+                    <div class="col-md-4 mb-3 mb-md-0 border-end ps-md-4">
+                        <div class="info-label">Customer Name</div>
+                        <div class="info-value">{{ job.customer.username }}</div>
+                    </div>
+                    <div class="col-md-4 ps-md-4">
+                        <div class="info-label">Repair Status</div>
+                        <div class="info-value text-success"><i class="bi bi-check-circle-fill me-1"></i>Completed</div>
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="mb-4">
+                        <label class="form-label">Select Service Job</label>
+                        <select name="job" class="form-select" required>
+    <option value="">-- Select Completed Job --</option>
+    {% for job in jobs %}
+        <option value="{{ job.id }}" {% if selected_job_id|add:"0" == job.id %}selected{% endif %}>
+            {{ job.vehicle }} - {{ job.customer.username }}
+        </option>
+    {% endfor %}
+</select>
+                    </div>
+                    <!-- Labour Charge -->
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Labour / Service Charge</label>
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+                            <input type="number" name="labour_charge" class="form-control" min="0" step="0.01"
+                                placeholder="0.00" required>
+                        </div>
+                    </div>
+
+                    <!-- Payment Status -->
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Initial Payment Status</label>
+                        <select name="payment_status" class="form-select">
+                            <option value="unpaid">Unpaid / Pending</option>
+                            <option value="paid">Paid / Settled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="mb-4">
+                    <label class="form-label">Invoice Notes (Internal/External)</label>
+                    <textarea name="notes" class="form-control" rows="2"
+                        placeholder="Describe additional work or suggestions..."></textarea>
+                </div>
+
+                <hr class="my-4 opacity-50">
+
+                <!-- Dynamic Parts Section -->
+                <h6 class="form-label mb-3" style="color: var(--brand-blue);">Inventory Items & Parts Consumed</h6>
+
+                <div id="parts-container">
+                    <!-- Single Part Row -->
+                    <div class="row g-2 align-items-center part-row">
+                        <div class="col-7">
+                            <select name="part" class="form-select">
+                                <option value="">-- Select Part from Inventory --</option>
+                                {% for part in parts %}
+                                <option value="{{ part.id }}">
+                                    {{ part.name }} (Stock: {{ part.quantity }}) — ₹{{ part.unit_price }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-3">
+                            <div class="input-group">
+                                <input type="number" name="quantity_used" class="form-control" min="1" value="1">
+                                <span class="input-group-text small"
+                                    style="font-size: 0.6rem; background: #fff;">QTY</span>
+                            </div>
+                        </div>
+                        <div class="col-2 text-end">
+                            <button type="button" class="btn-remove" onclick="removeRow(this)">
+                                <i class="bi bi-trash3-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-add-part mt-2" onclick="addPartRow()">
+                    <i class="bi bi-plus-lg me-1"></i> Add Another Part Line
+                </button>
+
+                <div class="mt-4 pt-3 border-top">
+                    <button type="submit" class="btn-generate shadow-sm">
+                        <i class="bi bi-file-earmark-check me-2"></i> Finalize & Generate Invoice
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addPartRow() {
+        const container = document.getElementById('parts-container');
+        const rows = container.querySelectorAll('.part-row');
+        const lastRow = rows[rows.length - 1];
+        const newRow = lastRow.cloneNode(true);
+
+        // Clear the selections in the new row
+        newRow.querySelector('select').selectedIndex = 0;
+        newRow.querySelector('input').value = 1;
+
+        container.appendChild(newRow);
+    }
+
+    function removeRow(btn) {
+        const container = document.getElementById('parts-container');
+        const rows = container.querySelectorAll('.part-row');
+        if (rows.length > 1) {
+            btn.closest('.part-row').remove();
+        }
+    }
+</script>
+
+{% endblock %}

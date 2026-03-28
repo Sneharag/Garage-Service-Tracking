@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --brand-blue: #211e48;
+        --brand-orange: #ffc107;
+    }
+
+    /* Stat Cards */
+    .stat-card {
+        background: white;
+        border-radius: 1.25rem;
+        padding: 1.5rem;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-number {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--brand-blue);
+    }
+
+    .stat-icon-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    /* Soft Colors */
+    .bg-orange-soft {
+        background: rgba(255, 193, 7, 0.15);
+        color: #b58900;
+    }
+
+    .bg-blue-soft {
+        background: rgba(13, 110, 253, 0.1);
+        color: #0d6efd;
+    }
+
+    .bg-green-soft {
+        background: rgba(25, 135, 84, 0.1);
+        color: #198754;
+    }
+
+    /* Badges */
+    .badge-pill-soft {
+        padding: 5px 12px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+</style>
+
+<div class="py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold text-uppercase letter-spacing-1 mb-0" style="color:var(--brand-blue)">
+                <i class="bi bi-speedometer2 me-2 text-orange"></i>Workshop Overview
+            </h4>
+            <p class="text-muted small mb-0">Live status of your assigned vehicle repairs</p>
+        </div>
+        <div class="d-none d-md-block">
+            <span class="badge bg-white text-muted border py-2 px-3 rounded-pill">
+                <i class="bi bi-person-badge me-2"></i>Technician Mode
+            </span>
+        </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="stat-icon-box bg-orange-soft"><i class="bi bi-clipboard-check"></i></div>
+                    <span class="text-muted small fw-bold">TOTAL ASSIGNED</span>
+                </div>
+                <div class="stat-number">{{ total_jobs }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="stat-icon-box bg-blue-soft"><i class="bi bi-tools"></i></div>
+                    <span class="text-muted small fw-bold">IN PROGRESS</span>
+                </div>
+                <div class="stat-number">{{ inprogress_jobs }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="stat-icon-box bg-green-soft"><i class="bi bi-check-circle"></i></div>
+                    <span class="text-muted small fw-bold">COMPLETED</span>
+                </div>
+                <div class="stat-number">{{ completed_jobs }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overview Table (No Actions) -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <span class="fw-bold text-dark small text-uppercase">
+                <i class="bi bi-layers-half me-2 text-orange"></i>Current Jobs Status
+            </span>
+            <!-- Primary Link to Management Page -->
+            <!-- <a href="{% url 'service_job_list' %}" class="btn btn-sm btn-dark rounded-pill px-3 fw-bold text-decoration-none" style="font-size: 0.75rem;">
+                MANAGE & UPDATE <i class="bi bi-arrow-right ms-1"></i>
+            </a> -->
+        </div>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 small fw-bold text-muted border-0">VEHICLE & ISSUE</th>
+                        <th class="py-3 small fw-bold text-muted border-0 text-end pe-4">CURRENT STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for job in jobs|slice:":8" %}
+                    <tr>
+                        <td class="ps-4 py-3">
+                            <div class="fw-bold text-dark">{{ job.vehicle }}</div>
+                            <div class="small text-muted">{{ job.problem_description|truncatechars:60 }}</div>
+                        </td>
+                        <td class="text-end pe-4">
+                            {% if not job.is_approved %}
+                            <span
+                                class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 small">
+                                <i class="bi bi-pause-circle me-1"></i> Waiting for Approval
+                            </span>
+                            {% else %}
+                            {% if job.status == 'pending' %}
+                            <span class="badge-pill-soft bg-orange-soft">Pending</span>
+                            {% elif job.status == 'in_progress' %}
+                            <span class="badge-pill-soft bg-blue-soft">In Progress</span>
+                            {% else %}
+                            <span class="badge-pill-soft bg-green-soft">Completed</span>
+                            {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2" class="text-center py-5 text-muted small">
+                            <i class="bi bi-inbox fs-2 d-block mb-2 opacity-25"></i>
+                            No active jobs assigned to you.
+                        </td>
+                    </tr>
+                    <td>
+    {% if job.rating %}
+        <div class="text-warning small">
+            <i class="bi bi-star-fill"></i> {{ job.rating }}/5
+        </div>
+    {% else %}
+        <span class="text-muted small">-</span>
+    {% endif %}
+</td>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,300 @@
+/* General Refinements */
+:root {
+    --primary-color: #0d6efd;
+    --primary-light: rgba(13, 110, 253, 0.1);
+    --success-light: rgba(25, 135, 84, 0.1);
+    --warning-light: rgba(255, 193, 7, 0.1);
+    --info-light: rgba(13, 202, 240, 0.1);
+}
+
+.py-6 { padding: 5rem 0; }
+
+/* Hero Styling */
+.hero-section {
+    position: relative;
+    min-height: 400px; /* Decreased from full-screen to a professional medium height */
+    height: 65vh; 
+    background: url('../images/homeservice.jpg') center/cover no-repeat;
+    overflow: hidden;
+    border-radius:20px;
+}
+
+/* Subtle, high-end overlay */
+.hero-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(75deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 100%);
+    z-index: 1;
+}
+
+/* Minimal Typography */
+.hero-title {
+    letter-spacing: -1px;
+    line-height: 1.1;
+    color: #ffa807;
+    font-size: calc(1.8rem + 1.5vw); /* Responsive size */
+}
+
+.hero-sub {
+    font-size: 1.1rem;
+    max-width: 450px;
+    line-height: 1.5;
+}
+
+.tracking-wider {
+    letter-spacing: 0.15em;
+}
+
+/* Professional Buttons */
+.btn {
+    border-radius: 4px; /* Sharper corners look more "corporate/professional" */
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-warning {
+    background-color: #ffac07;
+    border: 1px solid #ffa807;
+}
+
+.btn-warning:hover {
+    background-color: #e5ac00;
+    transform: translateY(-1px);
+}
+
+.btn-outline-light {
+    border-width: 1px;
+    opacity: 0.9;
+}
+
+.btn-outline-light:hover {
+    background-color: white;
+    color: #000;
+    opacity: 1;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        min-height: 400px;
+        text-align: center;
+    }
+    .hero-sub {
+        margin: 0 auto 1.5rem auto;
+    }
+    .hero-section .d-flex {
+        justify-content: center;
+    }
+}
+
+/* Stats Strip Styling */
+/* Wrapper to handle the 75% width and centering */
+.stats-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 10; /* Ensures it stays above the hero background */
+}
+
+.stats-strip {
+    background-color: #b16d1f; /* Your light grey color */
+    width: 75%;                /* 75% width as requested */
+    margin-top: -40px;         /* This pulls the strip "up" onto the hero section */
+    padding: 15px 0;
+    color: #f1efeb;            /* Your text color */
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Subtle shadow for professional depth */
+}
+
+.stat-item {
+    padding: 5px 0;
+}
+
+.stat-number {
+    font-size: 1.5rem;         /* Slightly smaller for "minimal" look */
+    font-weight: 800;
+    margin-bottom: 0;
+    display: block;
+    letter-spacing: -1px;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.65rem;        /* Smaller, cleaner label */
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    opacity: 0.7;
+    margin: 0;
+}
+
+/* Card Enhancements */
+/* Card Container */
+.service-card {
+    position: relative;
+    border-radius: 1.2rem;
+    overflow: hidden;
+    height: 350px; /* Fixed height for a professional uniform look */
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+}
+
+/* Image Styling */
+.service-img-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.service-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+/* Dark Gradient Overlay */
+.service-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Gradient goes from transparent at top to dark at bottom for text readability */
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 30%, rgba(0,0,0,0.85) 100%);
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+    color: white;
+}
+
+/* Text Content Positioning */
+.service-content {
+    transition: transform 0.4s ease;
+    width: 100%;
+}
+
+/* Price Tag Styling */
+.price-tag-overlay {
+    display: inline-block;
+    background: #ffc107; /* Warning color */
+    color: #000;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+/* Hover Effects */
+.service-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3) !important;
+}
+
+.service-card:hover .service-img {
+    transform: scale(1.1);
+}
+
+.service-card:hover .service-content {
+    transform: translateY(-5px);
+}
+
+.price-tag {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    padding: 5px 15px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* Feature Boxes */
+.bg-light-soft {
+    background-color: #f8f9fa;
+}
+
+/* Feature Box Styling */
+.feature-box {
+    border-radius: 1.25rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.05);
+    height: 100%;
+}
+
+.feature-box:hover {
+    transform: translateY(-10px);
+    background-color: #ffffff;
+    box-shadow: 0 1rem 3rem rgba(0,0,0,0.08) !important;
+    border-color: transparent;
+}
+
+/* Centered Icon Circle */
+.icon-circle {
+    width: 65px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem; /* Squircle look */
+    font-size: 1.75rem;
+    transition: transform 0.3s ease;
+}
+
+.feature-box:hover .icon-circle {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* Custom Soft Backgrounds for Icons */
+.bg-primary-soft { background-color: rgba(13, 110, 253, 0.1); }
+.bg-success-soft { background-color: rgba(25, 135, 84, 0.1); }
+.bg-warning-soft { background-color: rgba(255, 193, 7, 0.15); }
+.bg-info-soft    { background-color: rgba(13, 202, 240, 0.1); }
+
+/* Decorative Title Line */
+.title-line {
+    width: 60px;
+    height: 4px;
+    background: #ffc107; /* Warning color */
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+/* Typography adjustment */
+.tracking-wider {
+    letter-spacing: 2px;
+}
+/* Testimonials */
+.avatar-img {
+    width: 45px;
+    height: 45px;
+    background: #eee;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #555;
+}
+
+/* CTA Gradient */
+.cta-gradient-box {
+    background: linear-gradient(135deg, #fda90d 0%, #eaecee 100%);
+}
+
+/* Utility */
+.hover-up {
+    transition: all 0.3s ease;
+}
+.hover-up:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.1);
+}
+
+.title-line {
+    width: 60px;
+    height: 4px;
+    background: #ffc107;
+    border-radius: 2px;
+    margin-top: 15px;
+}

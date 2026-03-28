@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    :root {
+        --brand-blue: #211e48;
+        --brand-orange: #ffc107;
+    }
+
+    /* Page Header styling */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 1rem 0;
+    }
+
+    .page-title {
+        font-weight: 800;
+        color: var(--brand-blue);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* Professional Card for Table */
+    .vehicle-card {
+        border: none;
+        border-radius: 1.25rem;
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        background: white;
+    }
+
+    /* Table Styling */
+    .table thead th {
+        background-color: #f8f9fa;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: #6c757d;
+        border: none;
+        padding: 1.25rem 1rem;
+    }
+
+    .table tbody td {
+        padding: 1.25rem 1rem;
+        vertical-align: middle;
+        border-color: #f1f1f1;
+        color: #4a5568;
+    }
+
+    /* Vehicle Number "Plate" Style */
+    .vehicle-number {
+        font-family: 'Courier New', Courier, monospace;
+        background: #f1f1f1;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-weight: 700;
+        color: var(--brand-blue);
+        border: 1px solid #ddd;
+        display: inline-block;
+        font-size: 0.9rem;
+    }
+
+    /* Action Buttons Styling */
+    .action-btn {
+        width: 35px;
+        height: 35px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        transition: 0.3s;
+        text-decoration: none;
+        margin-left: 5px;
+    }
+
+    .btn-view { background: rgba(33, 30, 72, 0.1); color: var(--brand-blue); }
+    .btn-view:hover { background: var(--brand-blue); color: white; }
+
+    .btn-edit { background: rgba(255, 193, 7, 0.15); color: #856404; }
+    .btn-edit:hover { background: var(--brand-orange); color: #211e48; }
+
+    .btn-delete { background: rgba(220, 53, 69, 0.1); color: #dc3545; }
+    .btn-delete:hover { background: #dc3545; color: white; }
+
+    /* Add Vehicle Button */
+    .btn-add-vehicle {
+        background: var(--brand-orange);
+        color: var(--brand-blue);
+        font-weight: 700;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 50px;
+        transition: 0.3s;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+    }
+
+    .btn-add-vehicle:hover {
+        background: var(--brand-blue);
+        color: white;
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="page-header">
+    <div class="page-title">
+        <i class="bi bi-car-front-fill text-orange"></i>
+        My Vehicles
+    </div>
+
+    <a href="{% url 'add_vehicle' %}" class="btn btn-add-vehicle shadow-sm">
+        <i class="bi bi-plus-lg me-2"></i>Add Vehicle
+    </a>
+</div>
+
+<div class="vehicle-card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Vehicle Number</th>
+                    <th>Make & Model</th>
+                    <th>Company</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for v in vehicles %}
+                <tr>
+                    <td>
+                        <span class="vehicle-number">{{ v.vehicle_number }}</span>
+                    </td>
+                    <td>
+                        <div class="fw-bold text-dark">{{ v.model }}</div>
+                        <small class="text-muted">GarageSys Verified</small>
+                    </td>
+                    <td>
+                        <span class="badge bg-light text-dark border px-3 py-2 rounded-pill small">
+                            {{ v.company }}
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'vehicle_detail' v.id %}" class="action-btn btn-view" title="View Details">
+                            <i class="bi bi-eye-fill"></i>
+                        </a>
+                        <a href="{% url 'vehicle_edit' v.id %}" class="action-btn btn-edit" title="Edit Vehicle">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <a href="{% url 'vehicle_delete' v.id %}" class="action-btn btn-delete" 
+                           title="Delete Vehicle"
+                           onclick="return confirm('Delete this vehicle from your account?')">
+                            <i class="bi bi-trash3-fill"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center py-5">
+                        <div class="opacity-25 mb-3">
+                            <i class="bi bi-car-front" style="font-size: 4rem;"></i>
+                        </div>
+                        <p class="text-muted">No vehicles registered yet.</p>
+                        <a href="{% url 'add_vehicle' %}" class="btn btn-sm btn-link text-orange fw-bold text-decoration-none">
+                            Register your first vehicle
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

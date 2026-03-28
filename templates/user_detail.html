@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    :root {
+        --brand-blue: #211e48;
+        --brand-orange: #ffc107;
+        --soft-bg: #f8f9fa;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 2rem;
+    }
+
+    .btn-back {
+        width: 38px;
+        height: 38px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--brand-blue);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        text-decoration: none;
+    }
+    .btn-back:hover { background: var(--brand-blue); color: white; }
+
+    /* Profile Card */
+    .user-card {
+        border: none;
+        border-radius: 1.5rem;
+        background: white;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        max-width: 600px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .user-card-header {
+        background: var(--brand-blue);
+        height: 100px;
+        position: relative;
+    }
+
+    .user-avatar-wrap {
+        position: absolute;
+        bottom: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .avatar-circle-lg {
+        width: 90px;
+        height: 90px;
+        background: white;
+        border: 4px solid white;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--brand-blue);
+    }
+
+    .user-card-body {
+        padding: 60px 2rem 2rem;
+        text-align: center;
+    }
+
+    /* Role Badges */
+    .role-pill {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .role-admin { background: rgba(220, 53, 69, 0.1); color: #dc3545; }
+    .role-mechanic { background: rgba(13, 110, 253, 0.1); color: #0d6efd; }
+    .role-customer { background: rgba(25, 135, 84, 0.1); color: #198754; }
+
+    /* Info Display */
+    .info-grid {
+        background: var(--soft-bg);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-top: 2rem;
+        text-align: left;
+    }
+
+    .info-label {
+        font-size: 0.65rem;
+        font-weight: 800;
+        color: #a0aec0;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 2px;
+    }
+
+    .info-value {
+        font-weight: 700;
+        color: var(--brand-blue);
+        font-size: 1rem;
+        margin-bottom: 1.25rem;
+    }
+</style>
+
+<div class="container py-4">
+    <!-- Header -->
+    <div class="page-header">
+        <a href="javascript:history.back()" class="btn-back">
+            <i class="bi bi-chevron-left"></i>
+        </a>
+        <h3 class="fw-bold m-0 text-dark">User Profile Details</h3>
+    </div>
+
+    <!-- User Detail Card -->
+    <div class="user-card">
+        <div class="user-card-header">
+            <div class="user-avatar-wrap">
+                <div class="avatar-circle-lg">
+                    {{ user_obj.username|first|upper }}
+                </div>
+            </div>
+        </div>
+
+        <div class="user-card-body">
+            <h3 class="fw-bold mb-1" style="color: var(--brand-blue);">{{ user_obj.username }}</h3>
+            
+            <!-- Dynamic Role Badge -->
+            {% if user_obj.role == 'admin' %}
+                <span class="role-pill role-admin"><i class="bi bi-shield-lock me-1"></i>Administrator</span>
+            {% elif user_obj.role == 'mechanic' %}
+                <span class="role-pill role-mechanic"><i class="bi bi-wrench me-1"></i>System Mechanic</span>
+            {% else %}
+                <span class="role-pill role-customer"><i class="bi bi-person me-1"></i>Customer</span>
+            {% endif %}
+
+            <!-- Details Info Grid -->
+            <div class="info-grid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="info-label">Email Address</div>
+                        <div class="info-value">{{ user_obj.email }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="info-label">Account Identification</div>
+                        <div class="info-value">#USR-00{{ user_obj.id }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="info-label">Membership Status</div>
+                        <div class="info-value text-success">
+                            <i class="bi bi-check-circle-fill me-1"></i> Active Record
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="info-label">Database Access</div>
+                        <div class="info-value text-muted" style="font-size: 0.85rem;">
+                            {{ user_obj.role|capfirst }} Permissions
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Area -->
+            <div class="mt-4 pt-2">
+                <a href="#" class="btn btn-dark rounded-pill px-4 fw-bold shadow-sm">
+                    <i class="bi bi-pencil-square me-2"></i>Edit User
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <p class="text-muted small">GarageSys Administration Management © 2025</p>
+    </div>
+</div>
+
+{% endblock %}

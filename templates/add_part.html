@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --brand-blue: #211e48;
+        --brand-orange: #ffc107;
+        --soft-bg: #f8f9fa;
+    }
+
+    .dashboard-wrapper { padding: 1.5rem 0; }
+    
+    /* Header Styling */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .page-title {
+        font-weight: 800;
+        color: var(--brand-blue);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+    }
+
+    /* Professional Form Card */
+    .form-card {
+        background: white;
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        max-width: 600px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .form-header {
+        background-color: var(--soft-bg);
+        border-bottom: 1px solid #eee;
+        padding: 1.25rem;
+        font-weight: 800;
+        color: var(--brand-blue);
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        text-align: center;
+    }
+
+    .form-body {
+        padding: 2.5rem 2rem;
+    }
+
+    /* Professional Labels */
+    .form-label {
+        display: block;
+        font-weight: 700;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: #6c757d;
+        margin-bottom: 0.6rem;
+        letter-spacing: 0.8px;
+    }
+
+    /* Input Styling */
+    .form-control, .input-group-text {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        color: #4a5568;
+        background-color: #fff;
+        transition: all 0.2s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--brand-orange);
+        box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15);
+        color: #1a202c;
+    }
+
+    .input-group-text {
+        background-color: var(--soft-bg);
+        font-weight: 700;
+        color: var(--brand-blue);
+        border-right: none;
+    }
+
+    .form-text {
+        font-size: 0.7rem;
+        margin-top: 6px;
+        color: #a0aec0 !important;
+    }
+
+    /* Save Button */
+    .btn-save {
+        background: var(--brand-blue);
+        color: white;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        padding: 0.9rem 2rem;
+        border-radius: 50px;
+        border: none;
+        width: 100%;
+        transition: 0.3s;
+        margin-top: 0.5rem;
+    }
+
+    .btn-save:hover {
+        background: var(--brand-orange);
+        color: var(--brand-blue);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .btn-back {
+        font-size: 0.75rem;
+        color: #6c757d;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .btn-back:hover { color: var(--brand-blue); }
+</style>
+
+<div class="dashboard-wrapper container">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="bi bi-box-seam"></i> Stock Registry
+        </h1>
+        <a href="{% url 'part_list' %}" class="btn-back">
+            <i class="bi bi-arrow-left"></i> Back to Inventory
+        </a>
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="form-card animate__animated animate__fadeInUp">
+        <div class="form-header">
+            {% if form.instance.pk %}Update Part Details{% else %}Register New Part{% endif %}
+        </div>
+        
+        <div class="form-body">
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- Part Name -->
+                <div class="mb-4">
+                    <label class="form-label">Part Name</label>
+                    <input type="text" name="name" class="form-control" 
+                           placeholder="e.g. Engine Oil 5W-30" 
+                           value="{{ form.name.value|default:'' }}" required>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-4">
+                    <label class="form-label">Description (Optional)</label>
+                    <textarea name="description" class="form-control" rows="2" 
+                              placeholder="Brand, compatibility, or storage location...">{{ form.description.value|default:'' }}</textarea>
+                </div>
+
+                <div class="row g-3">
+                    <!-- Quantity -->
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Current Quantity</label>
+                        <input type="number" name="quantity" class="form-control" min="0" 
+                               value="{{ form.quantity.value|default:'' }}" required>
+                    </div>
+
+                    <!-- Low Stock Threshold -->
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Alert Threshold</label>
+                        <input type="number" name="low_stock_threshold" class="form-control" min="0" 
+                               value="{{ form.low_stock_threshold.value|default:'5' }}" required>
+                    </div>
+                </div>
+
+                <!-- Unit Price -->
+                <div class="mb-4">
+                    <label class="form-label">Unit Selling Price</label>
+                    <div class="input-group">
+                        <span class="input-group-text">₹</span>
+                        <input type="number" name="unit_price" class="form-control" min="0" step="0.01" 
+                               style="border-left: none;"
+                               value="{{ form.unit_price.value|default:'' }}" required>
+                    </div>
+                    <div class="form-text">System will auto-calculate this on service invoices.</div>
+                </div>
+
+                <button type="submit" class="btn-save shadow-sm mt-2">
+                    {% if form.instance.pk %}
+                        <i class="bi bi-arrow-repeat me-2"></i> Update Inventory
+                    {% else %}
+                        <i class="bi bi-plus-circle me-2"></i> Add to Inventory
+                    {% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

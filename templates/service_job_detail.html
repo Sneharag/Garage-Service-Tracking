@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --brand-blue: #211e48;
+        --brand-orange: #ffc107;
+        --soft-bg: #f8f9fa;
+    }
+
+    .dashboard-wrapper { padding: 1.5rem 0; }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .page-title {
+        font-weight: 800;
+        color: var(--brand-blue);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 1.1rem;
+    }
+
+    .detail-card {
+        background: white;
+        border: none;
+        border-radius: 1.25rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        max-width: 850px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .card-top-bar {
+        background-color: var(--soft-bg);
+        padding: 1.25rem 2rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .job-id-pill {
+        background: var(--brand-blue);
+        color: white;
+        padding: 4px 14px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .detail-body { padding: 2rem; }
+
+    .info-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        font-weight: 800;
+        color: #adb5bd;
+        letter-spacing: 1.2px;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .info-value {
+        font-weight: 700;
+        color: var(--brand-blue);
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .badge-soft {
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-weight: 800;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+    }
+
+    .badge-pending { background: rgba(255, 193, 7, 0.15); color: #b58900; }
+    .badge-progress { background: rgba(13, 110, 253, 0.1); color: #0d6efd; }
+    .badge-success { background: rgba(25, 135, 84, 0.1); color: #198754; }
+
+    .docs-section {
+        border-top: 1px solid #eee;
+        padding-top: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .img-preview-box {
+        max-width: 400px;
+        border-radius: 1rem;
+        overflow: hidden;
+        border: 1px solid #eee;
+        transition: 0.3s;
+    }
+
+    .img-preview-box:hover {
+        transform: scale(1.02);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .h-timeline-wrapper { margin: 1rem 0 2.5rem; width: 100%; }
+    .h-timeline { display: flex; justify-content: space-between; position: relative; }
+    .h-timeline::before { content: ""; position: absolute; top: 15px; left: 0; right: 0; height: 3px; background: #e2e8f0; }
+    .h-timeline-item { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; flex: 1; text-align: center; }
+    .h-step-icon { width: 30px; height: 30px; border-radius: 50%; background: #edf2f7; border: 4px solid white; box-shadow: 0 0 0 2px #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 800; margin-bottom: 8px; }
+    .h-step-done .h-step-icon { background: #198754 !important; box-shadow: 0 0 0 2px #198754; color: white; }
+    .h-step-active .h-step-icon { background: var(--brand-orange) !important; box-shadow: 0 0 0 5px rgba(255, 193, 7, 0.2); color: var(--brand-blue); }
+    .h-step-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: #a0aec0; }
+    .h-step-done .h-step-label { color: #198754; }
+    .h-step-active .h-step-label { color: var(--brand-blue); }
+
+    .action-footer { padding: 1.5rem 2rem; background: #fafafa; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+    .btn-custom { font-weight: 800; font-size: 0.75rem; text-transform: uppercase; padding: 10px 24px; border-radius: 50px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-update { background: var(--brand-orange); color: var(--brand-blue); }
+    .btn-invoice-view { background: var(--brand-blue); color: white; }
+    .btn-invoice-create { background: #198754; color: white; }
+    .btn-back { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--brand-blue); border: 1px solid #eee; text-decoration: none; }
+
+    /* Star Rating */
+    .star-rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 10px; }
+    .star-rating input { display: none; }
+    .star-rating label { font-size: 2rem; color: #cbd5e0; cursor: pointer; transition: 0.2s; }
+    .star-rating label:hover, .star-rating label:hover ~ label, .star-rating input:checked ~ label { color: var(--brand-orange); }
+</style>
+
+<div class="dashboard-wrapper container">
+    <div class="page-header mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <a href="{% url 'service_job_list' %}" class="btn-back"><i class="bi bi-arrow-left"></i></a>
+            <h1 class="page-title m-0">Service Job Record</h1>
+        </div>
+    </div>
+
+    <div class="detail-card animate__animated animate__fadeIn">
+        <div class="card-top-bar">
+            <span class="job-id-pill">REF #{{ job.id|stringformat:"04d" }}</span>
+            <span class="badge-soft {% if job.status == 'pending' %}badge-pending{% elif job.status == 'in_progress' %}badge-progress{% else %}badge-success{% endif %}">
+                {{ job.get_status_display }}
+            </span>
+        </div>
+
+        <div class="detail-body">
+            <!-- Estimated Time -->
+            {% if job.status != 'completed' and job.estimated_completion %}
+            <div class="alert alert-primary border-0 rounded-4 d-flex align-items-center gap-3 mb-4" style="background: rgba(13, 110, 253, 0.05); color: #0d6efd;">
+                <i class="bi bi-stopwatch-fill fs-3"></i>
+                <div>
+                    <small class="d-block text-uppercase fw-bold" style="font-size: 0.6rem;">Estimated Ready Time</small>
+                    <span class="fw-bold">{{ job.estimated_completion|date:"d M Y" }} at {{ job.estimated_completion|date:"h:i A" }}</span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Horizontal Timeline -->
+            <div class="h-timeline-wrapper">
+                <div class="h-timeline">
+                    <div class="h-timeline-item h-step-done">
+                        <div class="h-step-icon"><i class="bi bi-check-lg"></i></div>
+                        <span class="h-step-label">Check-In</span>
+                    </div>
+                    <div class="h-timeline-item {% if job.is_approved %}h-step-done{% else %}h-step-active{% endif %}">
+                        <div class="h-step-icon">{% if job.is_approved %}<i class="bi bi-check-lg"></i>{% else %}2{% endif %}</div>
+                        <span class="h-step-label">Approval</span>
+                    </div>
+                    <div class="h-timeline-item {% if job.status == 'completed' %}h-step-done{% elif job.status == 'in_progress' %}h-step-active{% endif %}">
+                        <div class="h-step-icon">{% if job.status == 'completed' %}<i class="bi bi-check-lg"></i>{% else %}3{% endif %}</div>
+                        <span class="h-step-label">Workshop</span>
+                    </div>
+                    <div class="h-timeline-item {% if job.status == 'completed' %}h-step-done{% endif %}">
+                        <div class="h-step-icon">{% if job.status == 'completed' %}<i class="bi bi-check-lg"></i>{% else %}4{% endif %}</div>
+                        <span class="h-step-label">Ready</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warranty & Next Service -->
+            {% if job.status == 'completed' %}
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="p-3 rounded-4 border bg-white h-100">
+                        <span class="info-label text-success"><i class="bi bi-shield-check me-1"></i> Warranty Coverage</span>
+                        <div class="fw-bold text-dark mt-1">Till: {{ job.warranty_expiry|date:"d M Y" }}</div>
+                        <div class="progress mt-2" style="height: 4px;"><div class="progress-bar bg-success" style="width: 100%"></div></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 rounded-4 border bg-white h-100">
+                        <span class="info-label text-primary"><i class="bi bi-calendar-event me-1"></i> Next Recommended Visit</span>
+                        <div class="fw-bold text-primary mt-1">{{ job.next_service_date|date:"d M Y" }}</div>
+                        <div class="progress mt-2" style="height: 4px;"><div class="progress-bar bg-primary opacity-25" style="width: 100%"></div></div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <hr class="opacity-10 my-4">
+
+            <!-- Data Grid -->
+            <div class="row">
+                <div class="col-md-6">
+                    <span class="info-label">Assigned Vehicle</span>
+                    <div class="info-value"><i class="bi bi-car-front me-2 text-muted"></i>{{ job.vehicle }}</div>
+                </div>
+                <div class="col-md-6">
+                    <span class="info-label">Registered Owner</span>
+                    <div class="info-value"><i class="bi bi-person me-2 text-muted"></i>{{ job.customer.username }}</div>
+                </div>
+                <div class="col-md-6">
+                    <span class="info-label">Lead Mechanic</span>
+                    <div class="info-value"><i class="bi bi-wrench me-2 text-muted"></i>{{ job.mechanic.username|default:"Not Yet Assigned" }}</div>
+                </div>
+                <div class="col-md-6">
+                    <span class="info-label">Check-in Date</span>
+                    <div class="info-value"><i class="bi bi-calendar3 me-2 text-muted"></i>{{ job.created_at|date:"d M Y, h:i A" }}</div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <span class="info-label">Problem Reported</span>
+                <p class="text-dark fw-medium p-3 rounded-3 bg-light" style="border-left: 4px solid var(--brand-orange);">{{ job.problem_description }}</p>
+            </div>
+
+            <!-- Mechanic Notes -->
+            {% if job.mechanic_notes %}
+            <div class="mb-4">
+                <span class="info-label text-orange">Technician's Work Log</span>
+                <p class="text-dark small p-3 rounded-3 bg-light" style="border-left: 4px solid var(--brand-blue); white-space: pre-wrap;">{{ job.mechanic_notes }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Image Documentation -->
+            {% if job.service_image %}
+            <div class="docs-section">
+                <span class="info-label">Workshop Documentation</span>
+                <div class="img-preview-box mt-2">
+                    <a href="{{ job.service_image.url }}" target="_blank">
+                        <img src="{{ job.service_image.url }}" class="img-fluid" alt="Service Evidence">
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- FEEDBACK SECTION -->
+            {% if job.status == 'completed' %}
+                <!-- 1. Form for Customer -->
+                {% if request.user.role == 'customer' and not job.rating %}
+                <hr class="my-5">
+                <div class="feedback-section text-center">
+                    <h5 class="fw-bold text-navy mb-3">How was your experience?</h5>
+                    <form action="{% url 'submit_feedback' job.id %}" method="POST" style="max-width: 500px; margin: auto;">
+                        {% csrf_token %}
+                        <div class="star-rating mb-4">
+                            <input type="radio" id="star5" name="rating" value="5"><label for="star5"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="star4" name="rating" value="4"><label for="star4"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="star3" name="rating" value="3"><label for="star3"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="star2" name="rating" value="2"><label for="star2"><i class="bi bi-star-fill"></i></label>
+                            <input type="radio" id="star1" name="rating" value="1"><label for="star1"><i class="bi bi-star-fill"></i></label>
+                        </div>
+                        <textarea name="feedback" class="form-control mb-3" rows="3" placeholder="Share your thoughts..."></textarea>
+                        <button type="submit" class="btn btn-dark rounded-pill px-5 fw-bold">Submit Review</button>
+                    </form>
+                </div>
+                {% endif %}
+
+                <!-- 2. Display Review for Customer and Admin -->
+                {% if job.rating and request.user.role != 'mechanic' %}
+                <hr class="my-5">
+                <div class="p-4 rounded-4 bg-light border-0 text-center">
+                    <h6 class="fw-bold text-navy mb-2">Service Rating</h6>
+                    <div class="text-warning mb-2">
+                        {% for i in "12345" %}
+                            <i class="bi bi-star-fill {% if forloop.counter <= job.rating %}text-warning{% else %}text-muted opacity-25{% endif %}"></i>
+                        {% endfor %}
+                    </div>
+                    <p class="text-muted small mb-0 fst-italic">"{{ job.feedback }}"</p>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="action-footer">
+            <div class="footer-left">
+                {% if request.user.role == 'admin' or request.user.role == 'mechanic' %}
+                <a href="{% url 'update_service_job' job.id %}" class="btn-custom btn-update"><i class="bi bi-pencil-square"></i> Update Progress</a>
+                {% endif %}
+
+                {% if request.user.role == 'customer' and not job.is_approved %}
+                <form action="{% url 'approve_service_job' job.id %}" method="POST" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-custom btn-invoice-create border-0"><i class="bi bi-check-all"></i> Approve Work</button>
+                </form>
+                {% elif job.is_approved %}
+                <span class="badge bg-success rounded-pill px-3 py-2"><i class="bi bi-shield-check me-1"></i> Customer Approved</span>
+                {% endif %}
+            </div>
+
+            <div class="footer-right">
+                {% if job.status == 'completed' %}
+                    {% if job.invoice %}
+                    <a href="{% url 'invoice_detail' job.invoice.id %}" class="btn-custom btn-invoice-view"><i class="bi bi-file-earmark-text"></i> View Invoice</a>
+                    {% elif request.user.role == 'admin' %}
+                    <a href="{% url 'create_invoice' %}?job_id={{ job.id }}" class="btn-custom btn-invoice-create"><i class="bi bi-plus-lg"></i> Generate Invoice</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

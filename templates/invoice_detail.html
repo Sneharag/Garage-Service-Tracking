@@ -1,0 +1,388 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* --- Keep your existing Screen Styles (No changes here) --- */
+    :root {
+        --brand-blue: #211e48;
+        --brand-orange: #ffc107;
+        --soft-bg: #f8f9fa;
+    }
+
+    .invoice-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+        max-width: 880px;
+        margin: auto;
+        overflow: hidden;
+    }
+
+    .invoice-top {
+        padding: 1.5rem 2rem;
+        background: linear-gradient(135deg, #211e48, #2f2b6d);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .invoice-id {
+        font-size: 1.4rem;
+        font-weight: 800;
+    }
+
+    .status-badge {
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 700;
+    }
+
+    .badge-paid {
+        background: #198754;
+        color: white;
+    }
+
+    .badge-unpaid {
+        background: #dc3545;
+        color: white;
+    }
+
+    .invoice-body {
+        padding: 2.2rem;
+    }
+
+    .info-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: #888;
+        font-weight: 700;
+    }
+
+    .info-value {
+        font-weight: 700;
+        color: var(--brand-blue);
+    }
+
+    .parts-table {
+        width: 100%;
+        margin-top: 1.8rem;
+        border-collapse: collapse;
+    }
+
+    .parts-table th {
+        background: #f1f3f5;
+        padding: 12px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: #6c757d;
+        text-align: left;
+    }
+
+    .parts-table td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .summary-box {
+        margin-top: 0.8rem;
+        max-width: 300px;
+        margin-left: auto;
+        background: #f9fafb;
+        padding: 1.2rem;
+        border-radius: 12px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+
+    .summary-total {
+        border-top: 1px solid #ddd;
+        margin-top: 10px;
+        padding-top: 10px;
+        font-weight: 800;
+        font-size: 1.2rem;
+        color: var(--brand-blue);
+    }
+
+    .btn-action-row {
+        padding: 1.2rem 2rem;
+        border-top: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .btn-secondary-custom {
+        background: #e9ecef;
+        padding: 8px 18px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .btn-pay-success {
+        background: linear-gradient(135deg, #198754, #157347);
+        color: #fff;
+        padding: 8px 20px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        text-decoration: none;
+        border: none;
+    }
+
+    /* 🖨️ UPDATED PRINT LOGIC */
+    @media print {
+
+        /* 1. Remove browser default headers/footers and margins */
+        @page {
+            margin: 5mm;
+            size: auto;
+        }
+
+        /* 2. Hide specific UI elements (Use your actual Nav/Footer classes) */
+        nav,
+        .navbar,
+        footer,
+        .footer,
+        .btn-action-row,
+        .page-header,
+        .sidebar,
+        #sidebarMenu {
+            display: none !important;
+        }
+
+        /* 3. Reset Body for Print */
+        body {
+            background: #fff !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* 4. Position the Invoice Card */
+        .dashboard-wrapper {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .invoice-card {
+            box-shadow: none !important;
+            border: 1px solid #eee !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+            /* Flat edges look better on paper */
+            position: relative !important;
+        }
+
+        /* 5. Force background colors to show */
+        .invoice-top {
+            background-color: #211e48 !important;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .parts-table th {
+            background-color: #f1f3f5 !important;
+            -webkit-print-color-adjust: exact;
+        }
+
+        /* 6. Ensure the page height is exactly what is needed */
+        html,
+        body {
+            height: auto !important;
+            overflow: visible !important;
+        }
+    }
+
+    /* Circular Back Button Style */
+    .btn-back {
+        width: 40px;
+        height: 40px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--brand-blue);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        text-decoration: none;
+        transition: 0.3s;
+        border: 1px solid #eee;
+    }
+
+    .btn-back:hover {
+        background: var(--brand-blue);
+        color: white;
+        transform: translateX(-3px);
+        /* Subtle nudge effect */
+    }
+
+    /* Ensure the header aligns correctly */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* 🖨️ PRINT ADJUSTMENT */
+    @media print {
+
+        .btn-back,
+        .page-header button {
+            display: none !important;
+            /* Hide back button and print button on paper */
+        }
+    }
+</style>
+
+
+<div class="dashboard-wrapper container">
+
+    <div class="container mt-3">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show border-0 shadow-sm rounded-4" role="alert">
+                <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% else %}bi-exclamation-triangle-fill{% endif %} me-2"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+    <!-- PAGE HEADER -->
+    <div class="page-header mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <!-- New Back Arrow Button -->
+            <a href="{% url 'invoice_list' %}" class="btn-back" title="Back to Invoices">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <h1 class="page-title m-0">Invoice Details</h1>
+        </div>
+
+        {% if request.user.role == 'customer' %}
+        <button onclick="window.print();" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+            <i class="bi bi-printer me-1"></i> Print Invoice
+        </button>
+        {% endif %}
+    </div>
+
+    <!-- MAIN INVOICE DOCUMENT -->
+    <div class="invoice-card animate__animated animate__fadeIn">
+
+        <!-- Top Blue Banner -->
+        <div class="invoice-top">
+            <div>
+                <div class="small opacity-75">Invoice</div>
+                <div class="invoice-id">#{{ invoice.pk|stringformat:"05d" }}</div>
+            </div>
+
+            <div class="text-end">
+                <span
+                    class="status-badge {% if invoice.payment_status == 'paid' %}badge-paid{% else %}badge-unpaid{% endif %}">
+                    {{ invoice.get_payment_status_display }}
+                </span>
+                <div class="small opacity-75 mt-1">
+                    {{ invoice.created_at|date:"d M Y" }}
+                </div>
+            </div>
+        </div>
+
+        <div class="invoice-body">
+            <!-- Client & Vehicle Info -->
+            <div class="row">
+                <div class="col-md-4 info-group border-end">
+                    <span class="info-label">Customer Details</span>
+                    <div class="info-value">{{ invoice.service_job.customer.username }}</div>
+                    <div class="text-muted small">{{ invoice.service_job.customer.email }}</div>
+                </div>
+                <div class="col-md-4 info-group border-end ps-md-4">
+                    <span class="info-label">Vehicle Information</span>
+                    <div class="info-value">{{ invoice.service_job.vehicle }}</div>
+                    <div class="text-muted small">Service Job #{{ invoice.service_job.id }}</div>
+                </div>
+                <div class="col-md-4 info-group ps-md-4">
+                    <span class="info-label">Mechanic Assigned</span>
+                    <div class="info-value">{{ invoice.service_job.mechanic.username|default:"N/A" }}</div>
+                </div>
+            </div>
+
+            <!-- Notes Section -->
+            {% if invoice.notes %}
+            <div class="alert alert-light border-0 shadow-sm rounded-4 p-3 mb-4">
+                <span class="info-label">Mechanic Notes</span>
+                <p class="mb-0 small text-dark fst-italic">"{{ invoice.notes }}"</p>
+            </div>
+            {% endif %}
+
+            <!-- Parts Table -->
+            <table class="parts-table">
+                <thead>
+                    <tr>
+                        <th>Item Description</th>
+                        <th class="text-center">Rate</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-end">Line Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in invoice.invoice_parts.all %}
+                    <tr>
+                        <td><strong>{{ item.part.name }}</strong></td>
+                        <td class="text-center text-muted">₹{{ item.part.unit_price }}</td>
+                        <td class="text-center">{{ item.quantity_used }}</td>
+                        <td class="text-end fw-bold">₹{{ item.total_price }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">No replacement parts were used for this
+                            service.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Financial Summary -->
+            <div class="summary-box">
+                <div class="summary-row">
+                    <span class="text-muted">Parts Subtotal</span>
+                    <span class="fw-bold">₹{{ invoice.parts_total }}</span>
+                </div>
+                <div class="summary-row">
+                    <span class="text-muted">Labour Charges</span>
+                    <span class="fw-bold">₹{{ invoice.labour_charge }}</span>
+                </div>
+                <div class="summary-row summary-total">
+                    <span>Total Amount</span>
+                    <span>₹{{ invoice.grand_total }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="btn-action-row">
+            <!-- <a href="{% url 'invoice_list' %}" class="btn-secondary-custom">
+                <i class="bi bi-arrow-left me-1"></i> Back to List
+            </a> -->
+
+            
+
+            {% if request.user.role == 'customer' and invoice.payment_status == 'unpaid' %}
+            <a href="{% url 'pay_invoice' invoice.pk %}" class="btn-pay-success">
+                <i class="bi bi-credit-card me-1"></i> Proceed to Pay
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

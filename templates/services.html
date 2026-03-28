@@ -1,0 +1,383 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --brand-blue: #211e48;
+        --brand-orange: #ffc107;
+        --soft-bg: #f8f9fa;
+        --text-muted: #718096;
+    }
+
+    /* Page Header */
+    .services-header {
+        padding: 20px 0 20px;
+        text-align: center;
+    }
+
+    .accent-line {
+        width: 50px;
+        height: 4px;
+        background: var(--brand-orange);
+        border-radius: 10px;
+        margin: 20px auto;
+    }
+
+    /* Slider Container */
+    .services-slider-wrapper {
+        position: relative;
+        padding: 0 40px;
+        margin-bottom: 80px;
+    }
+
+    /* The Scroll Track */
+    .services-track {
+        display: flex;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        gap: 24px;
+        padding: 20px 5px;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+        scroll-snap-type: x mandatory;
+    }
+
+    .services-track::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
+    }
+
+    /* Service Card Styling */
+    .service-slide {
+        flex: 0 0 380px; /* Width of each card */
+        scroll-snap-align: start;
+    }
+
+    .service-card {
+        border: none;
+        border-radius: 1.5rem;
+        background: white;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        height: 100%;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .service-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .service-img-wrap {
+        height: 200px;
+        position: relative;
+    }
+
+    .service-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .pickup-badge {
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--brand-blue);
+        padding: 5px 15px;
+        border-radius: 50px;
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        backdrop-filter: blur(4px);
+    }
+
+    /* Specs Grid (Technical Data) */
+    .specs-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        background: var(--soft-bg);
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .spec-item { display: flex; flex-direction: column; }
+    .spec-label { font-size: 0.55rem; font-weight: 800; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.5px; }
+    .spec-value { font-size: 0.8rem; font-weight: 700; color: var(--brand-blue); }
+
+    /* Process Section */
+    .process-title {
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: var(--brand-blue);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+        display: block;
+        border-left: 3px solid var(--brand-orange);
+        padding-left: 8px;
+    }
+
+    .process-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    .process-list li {
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .process-list li::before {
+        content: "\F272"; /* Bootstrap Icon Check */
+        font-family: "bootstrap-icons";
+        color: var(--brand-orange);
+        font-weight: bold;
+    }
+
+    /* Navigation Buttons */
+    .slider-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        height: 50px;
+        background: white;
+        border: none;
+        border-radius: 50%;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--brand-blue);
+        font-size: 1.2rem;
+        transition: 0.3s;
+    }
+
+    .slider-nav:hover {
+        background: var(--brand-blue);
+        color: white;
+    }
+
+    .nav-prev { left: 0; }
+    .nav-next { right: 0; }
+
+    .btn-book-now {
+        background: var(--brand-blue);
+        color: white;
+        border-radius: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        padding: 12px;
+        transition: 0.3s;
+        text-decoration: none;
+        text-align: center;
+        display: block;
+        margin-top: auto;
+    }
+
+    .btn-book-now:hover {
+        background: var(--brand-orange);
+        color: var(--brand-blue);
+    }
+
+    @media (max-width: 768px) {
+        .service-slide { flex: 0 0 85%; }
+        .slider-nav { display: none; }
+        .services-slider-wrapper { padding: 0 10px; }
+    }
+</style>
+
+<div class="container">
+    <!-- Clean Header -->
+    <div class="services-header">
+        <h1 class="fw-bold text-navy">Service Catalog</h1>
+        <div class="accent-line"></div>
+        <p class="text-muted mx-auto" style="max-width: 600px;">
+            Select from our range of professional workshop services. All services include a digital health report and automated maintenance reminders.
+        </p>
+    </div>
+
+    <!-- Slider Wrapper -->
+    <div class="services-slider-wrapper">
+        <!-- Navigation -->
+        <button class="slider-nav nav-prev" id="prevBtn"><i class="bi bi-chevron-left"></i></button>
+        <button class="slider-nav nav-next" id="nextBtn"><i class="bi bi-chevron-right"></i></button>
+
+        <!-- Track -->
+        <div class="services-track" id="scrollTrack">
+            
+            <!-- Service 1: General Service -->
+            <div class="service-slide">
+                <div class="service-card p-0">
+                    <div class="service-img-wrap">
+                        <img src="{% static 'images/general.jpg' %}" class="service-img" alt="General Service">
+                        <span class="pickup-badge"><i class="bi bi-truck me-1"></i> Pickup Available</span>
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h4 class="fw-bold mb-3" style="color: var(--brand-blue);">General Service</h4>
+                        
+                        <div class="specs-grid">
+                            <div class="spec-item"><span class="spec-label">Duration</span><span class="spec-value">4-6 Hours</span></div>
+                            <div class="spec-item"><span class="spec-label">Warranty</span><span class="spec-value">6M / 10k KM</span></div>
+                            <div class="spec-item"><span class="spec-label">Next Service</span><span class="spec-value">Every 10k KM</span></div>
+                            <div class="spec-item"><span class="spec-label">Parts</span><span class="spec-value">OEM Grade</span></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <span class="process-title">Service Highlights</span>
+                            <ul class="process-list">
+                                <li>50-Point Digital Health Check</li>
+                                <li>Engine Oil & Filter Change</li>
+                                <li>Full OBD System Scanning</li>
+                                <li>Brake Inspection & Cleaning</li>
+                            </ul>
+                        </div>
+
+                        <a href="{% url 'add_vehicle' %}" class="btn-book-now">Book This Service</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 2: Oil Change -->
+            <div class="service-slide">
+                <div class="service-card p-0">
+                    <div class="service-img-wrap">
+                        <img src="{% static 'images/oilchange.jpg' %}" class="service-img" alt="Oil Change">
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h4 class="fw-bold mb-3" style="color: var(--brand-blue);">Oil & Filter Service</h4>
+                        
+                        <div class="specs-grid">
+                            <div class="spec-item"><span class="spec-label">Duration</span><span class="spec-value">45 Minutes</span></div>
+                            <div class="spec-item"><span class="spec-label">Warranty</span><span class="spec-value">1,000 KM</span></div>
+                            <div class="spec-item"><span class="spec-label">Next Service</span><span class="spec-value">5k - 10k KM</span></div>
+                            <div class="spec-item"><span class="spec-label">Oil Type</span><span class="spec-value">Fully Synthetic</span></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <span class="process-title">Service Highlights</span>
+                            <ul class="process-list">
+                                <li>Hot Oil Drainage System</li>
+                                <li>Magnetic Plug Inspection</li>
+                                <li>Filter Housing Cleaning</li>
+                                <li>Service Light Reset</li>
+                            </ul>
+                        </div>
+
+                        <a href="{% url 'add_vehicle' %}" class="btn-book-now">Book This Service</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 3: Deep Cleaning -->
+            <div class="service-slide">
+                <div class="service-card p-0">
+                    <div class="service-img-wrap">
+                        <img src="{% static 'images/carwash.jpg' %}" class="service-img" alt="Deep Cleaning">
+                        <span class="pickup-badge"><i class="bi bi-truck me-1"></i> Pickup Available</span>
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h4 class="fw-bold mb-3" style="color: var(--brand-blue);">Deep Detailing</h4>
+                        
+                        <div class="specs-grid">
+                            <div class="spec-item"><span class="spec-label">Duration</span><span class="spec-value">3-4 Hours</span></div>
+                            <div class="spec-item"><span class="spec-label">Warranty</span><span class="spec-value">30 Days Finish</span></div>
+                            <div class="spec-item"><span class="spec-label">Next Service</span><span class="spec-value">As Required</span></div>
+                            <div class="spec-item"><span class="spec-label">Chemicals</span><span class="spec-value">Eco-Friendly</span></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <span class="process-title">Service Highlights</span>
+                            <ul class="process-list">
+                                <li>Dashboard Polish & UV Protect</li>
+                                <li>Steam Interior Cleaning</li>
+                                <li>Exterior Wax & Glaze</li>
+                                <li>Engine Bay Detailing</li>
+                            </ul>
+                        </div>
+
+                        <a href="{% url 'add_vehicle' %}" class="btn-book-now">Book This Service</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 4: Scanning -->
+            <div class="service-slide">
+                <div class="service-card p-0">
+                    <div class="service-img-wrap">
+                        <img src="{% static 'images/fullcheckup.jpg' %}" class="service-img" alt="Full Checkup">
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h4 class="fw-bold mb-3" style="color: var(--brand-blue);">Diagnostic Scan</h4>
+                        
+                        <div class="specs-grid">
+                            <div class="spec-item"><span class="spec-label">Duration</span><span class="spec-value">30 Minutes</span></div>
+                            <div class="spec-item"><span class="spec-label">Warranty</span><span class="spec-value">Not Applicable</span></div>
+                            <div class="spec-item"><span class="spec-label">Technology</span><span class="spec-value">OBD-II Cloud</span></div>
+                            <div class="spec-item"><span class="spec-label">Report</span><span class="spec-value">Instant PDF</span></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <span class="process-title">Service Highlights</span>
+                            <ul class="process-list">
+                                <li>Full ECU Error Code Check</li>
+                                <li>Sensor Data Live Analysis</li>
+                                <li>Battery Health Test</li>
+                                <li>Digital Report Generation</li>
+                            </ul>
+                        </div>
+
+                        <a href="{% url 'add_vehicle' %}" class="btn-book-now">Book This Service</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    const track = document.getElementById('scrollTrack');
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+
+    const cardWidth = 404; // Card width (380) + Gap (24)
+
+    nextBtn.addEventListener('click', () => {
+        track.scrollLeft += cardWidth;
+    });
+
+    prevBtn.addEventListener('click', () => {
+        track.scrollLeft -= cardWidth;
+    });
+
+    // Handle button visibility
+    track.addEventListener('scroll', () => {
+        prevBtn.style.opacity = track.scrollLeft <= 0 ? "0" : "1";
+        prevBtn.style.pointerEvents = track.scrollLeft <= 0 ? "none" : "auto";
+        
+        const isEnd = track.scrollLeft + track.offsetWidth >= track.scrollWidth - 10;
+        nextBtn.style.opacity = isEnd ? "0" : "1";
+        nextBtn.style.pointerEvents = isEnd ? "none" : "auto";
+    });
+
+    // Initial button state
+    prevBtn.style.opacity = "0";
+    prevBtn.style.pointerEvents = "none";
+</script>
+
+{% endblock %}

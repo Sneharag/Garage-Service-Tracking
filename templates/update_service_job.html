@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    :root {
+        --brand-blue: #211e48;
+        --brand-orange: #ffc107;
+        --soft-bg: #f8f9fa;
+    }
+
+    .dashboard-wrapper {
+        padding: 1.5rem 0;
+    }
+
+    /* Header Styling */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .page-title {
+        font-weight: 800;
+        color: var(--brand-blue);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+    }
+
+    /* Professional Form Card */
+    .form-card {
+        background: white;
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        max-width: 600px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .form-header {
+        background-color: var(--soft-bg);
+        border-bottom: 1px solid #eee;
+        padding: 1.25rem;
+        font-weight: 800;
+        color: var(--brand-blue);
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        text-align: center;
+    }
+
+    .form-body {
+        padding: 2rem;
+    }
+
+    /* Summary Section */
+    .job-summary-mini {
+        background: #fdfdfd;
+        border: 1px solid #f1f1f1;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .summary-item {
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .summary-item strong {
+        color: #888;
+        text-transform: uppercase;
+        font-size: 0.65rem;
+        letter-spacing: 0.5px;
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    .summary-item span {
+        color: var(--brand-blue);
+        font-weight: 700;
+    }
+
+    /* Professional Labels & Inputs */
+    .form-label {
+        display: block;
+        font-weight: 700;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: #6c757d;
+        margin-bottom: 0.6rem;
+        letter-spacing: 0.8px;
+    }
+
+    .form-control,
+    .form-select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        color: #4a5568;
+        background-color: #fff;
+        transition: all 0.2s;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        outline: none;
+        border-color: var(--brand-orange);
+        box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.15);
+    }
+
+    /* Action Buttons */
+    .btn-save {
+        background: var(--brand-blue);
+        color: white;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        padding: 0.9rem 2rem;
+        border-radius: 50px;
+        border: none;
+        width: 100%;
+        transition: 0.3s;
+        margin-top: 1rem;
+    }
+
+    .btn-save:hover {
+        background: var(--brand-orange);
+        color: var(--brand-blue);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-back {
+        font-size: 0.75rem;
+        color: #6c757d;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btn-back:hover {
+        color: var(--brand-blue);
+    }
+
+    hr {
+        opacity: 0.1;
+        margin: 2rem 0;
+    }
+</style>
+
+<div class="dashboard-wrapper container">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="bi bi-pencil-square"></i> Edit Service Job
+        </h1>
+        <a href="{% url 'service_job_list' %}" class="btn-back">
+            <i class="bi bi-arrow-left"></i> Cancel
+        </a>
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="form-card animate__animated animate__fadeInUp">
+        <div class="form-header">
+            Job Reference: #{{ job.id|stringformat:"04d" }}
+        </div>
+
+        <div class="form-body">
+            <!-- Mini Job Summary -->
+            <div class="job-summary-mini">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="summary-item">
+                            <strong>Vehicle</strong>
+                            <span>{{ job.vehicle }}</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="summary-item">
+                            <strong>Customer</strong>
+                            <span>{{ job.customer.username }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% if user_role != 'admin' %}
+                <div class="summary-item mt-2">
+                    <strong>Reported Problem</strong>
+                    <span class="small">{{ job.problem_description }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- ADMIN ONLY FIELDS -->
+                {% if user_role == 'admin' %}
+                <div class="mb-4">
+                    <label class="form-label">Assign Vehicle</label>
+                    <select name="vehicle" class="form-select">
+                        {% for v in vehicles %}
+                        <option value="{{ v.pk }}" {% if job.vehicle.pk == v.pk %}selected{% endif %}>
+                            {{ v }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Assign Mechanic</label>
+                    <select name="mechanic" class="form-select">
+                        <option value="">-- No Mechanic Assigned --</option>
+                        {% for m in mechanics %}
+                        <option value="{{ m.pk }}" {% if job.mechanic and job.mechanic.pk == m.pk %}selected{% endif %}>
+                            {{ m.username }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Problem Description</label>
+                    <textarea name="problem_description" class="form-control"
+                        rows="3">{{ job.problem_description }}</textarea>
+                </div>
+
+                <hr>
+                {% endif %}
+
+                <!-- STATUS FIELD (Visible to both) -->
+                <div class="mb-4">
+                    <label class="form-label">Current Progress Status</label>
+                    <select  name="status" class="form-select" {% if not job.is_approved and request.user.role == 'mechanic' %}disabled{% endif %}>
+                        <option value="pending" {% if job.status == 'pending' %}selected{% endif %}>Pending / Not Started
+                        </option>
+                        <option value="in_progress" {% if job.status == 'in_progress' %}selected{% endif %}>In Progress /
+                            Ongoing</option>
+                        <option value="completed" {% if job.status == 'completed' %}selected{% endif %}>Completed / Ready
+                        </option>
+                    </select>
+                    {% if not job.is_approved and request.user.role == 'mechanic' %}
+    <div class="alert alert-warning mt-2 small">
+        <i class="bi bi-exclamation-triangle me-1"></i> You cannot start work until the customer approves the service.
+    </div>
+{% endif %}
+                    <div class="mt-2 text-muted" style="font-size: 0.65rem;">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Changing status to "Completed" allows Admin to generate an invoice.
+                    </div>
+                </div>
+
+                <!-- Add this field inside your update form -->
+<div class="mb-4">
+    <label class="form-label fw-bold">Estimated Completion Time</label>
+    <input type="datetime-local" name="estimated_completion" 
+           class="form-control" 
+           value="{{ job.estimated_completion|date:'Y-m-d\TH:i' }}">
+    <small class="text-muted">When do you expect the car to be ready?</small>
+</div>
+
+                <div class="mb-4">
+                <label class="form-label fw-bold">Upload Documentation Photo</label>
+                <input type="file" name="service_image" class="form-control" accept="image/*">
+                {% if job.service_image %}
+                    <div class="mt-2 small text-muted">Current: <a href="{{ job.service_image.url }}" target="_blank">View Photo</a></div>
+                {% endif %}
+            </div>
+
+                <div class="mb-4">
+                <label class="form-label fw-bold">Repair Notes / Diagnosis</label>
+                <!-- This textarea must have name="mechanic_notes" -->
+                <textarea name="mechanic_notes" class="form-control" rows="4" placeholder="Enter diagnosis or work details...">{{ job.mechanic_notes|default:'' }}</textarea>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn-save shadow-sm mt-2">
+                    <i class="bi bi-check2-circle me-1"></i> Save Progress
+                </button>
+                <a href="{% url 'service_job_detail' job.id %}" class="btn btn-light border px-4">Cancel</a>
+            </div>
+
+
+                
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+/* ── STAT CARDS ── */
+.stat-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-icon {
+  font-size: 1.6rem;
+  color: var(--orange);
+}
+
+.stat-link {
+  color: var(--orange);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.stat-link:hover {
+  color: var(--orange-hover);
+}
+
+.stat-footer {
+  margin-top: 0.5rem;
+}

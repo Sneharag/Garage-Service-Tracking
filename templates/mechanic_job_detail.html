@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    :root {
+        --brand-blue: #211e48;
+        --brand-orange: #ffc107;
+        --soft-bg: #f8f9fa;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        /* margin-bottom: 2rem; */
+    }
+
+    .btn-back {
+        width: 40px;
+        height: 40px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--brand-blue);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        text-decoration: none;
+        transition: 0.3s;
+    }
+    .btn-back:hover { background: var(--brand-blue); color: white; }
+
+    /* Main Detail Card */
+    .job-card {
+        border: none;
+        border-radius: 1.5rem;
+        background: white;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .job-card-header {
+        background: var(--brand-blue);
+        padding: 20px;
+        color: white;
+    }
+
+    .job-id-tag {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        opacity: 0.7;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    /* Soft Badges */
+    .badge-status {
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+    }
+    .bg-orange-soft { background: rgba(255, 193, 7, 0.2); color: #ffc107; }
+    .bg-blue-soft { background: rgba(13, 110, 253, 0.2); color: #0d6efd; }
+    .bg-green-soft { background: rgba(25, 135, 84, 0.2); color: #198754; }
+
+    /* Info Grid */
+    .info-label {
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: #a0aec0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+    }
+    .info-value {
+        font-weight: 700;
+        color: var(--brand-blue);
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Description Blocks */
+    .content-box {
+        background: var(--soft-bg);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        border-left: 4px solid #dee2e6;
+        height: 100%;
+    }
+    .content-box.notes { border-left-color: var(--brand-orange); background: #fffdf5; }
+
+    .btn-update-action {
+        background: var(--brand-orange);
+        color: var(--brand-blue);
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 12px 30px;
+        border-radius: 12px;
+        border: none;
+        transition: 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .btn-update-action:hover {
+        background: var(--brand-blue);
+        color: white;
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="container py-3">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="d-flex align-items-center gap-3">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+            <h3 class="fw-bold m-0">Job Analysis</h3>
+        </div>
+        
+        {% if job.status == 'pending' %}
+            <span class="badge-status bg-orange-soft"><i class="bi bi-clock-history me-2"></i>Pending</span>
+        {% elif job.status == 'in_progress' %}
+            <span class="badge-status bg-blue-soft"><i class="bi bi-tools me-2"></i>In Progress</span>
+        {% else %}
+            <span class="badge-status bg-green-soft"><i class="bi bi-check-circle-fill me-2"></i>Completed</span>
+        {% endif %}
+    </div>
+
+    <!-- Main Job Card -->
+    <div class="job-card mb-4">
+        <div class="job-card-header">
+            <span class="job-id-tag">Reference Number</span>
+            <h2 class="fw-bold m-0">#SJ-{{ job.id|stringformat:"04d" }}</h2>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="info-label">Vehicle Identity</div>
+                    <div class="info-value">
+                        <i class="bi bi-car-front me-2 text-muted"></i>{{ job.vehicle }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-label">Customer Profile</div>
+                    <div class="info-value">
+                        <i class="bi bi-person me-2 text-muted"></i>{{ job.customer.username }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-label">Assigned Mechanic</div>
+                    <div class="info-value">
+                        <i class="bi bi-wrench-adjustable me-2 text-muted"></i>
+                        {{ job.mechanic.username|default:"Searching for Technician..." }}
+                    </div>
+                </div>
+            </div>
+
+            <hr class="opacity-10 my-4">
+
+            <div class="row g-4">
+                <!-- Customer Complaint -->
+                <div class="col-md-6">
+                    <div class="content-box">
+                        <div class="info-label mb-2"><i class="bi bi-chat-left-dots-fill me-1"></i> Reported Problem</div>
+                        <p class="mb-0 text-dark fw-medium" style="line-height: 1.6;">
+                            {{ job.problem_description }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Mechanic Work Notes -->
+                <div class="col-md-6">
+                    <div class="content-box notes">
+                        <div class="info-label mb-2 text-orange"><i class="bi bi-journal-check me-1"></i> Technician Work Log</div>
+                        <p class="mb-0 text-dark small" style="line-height: 1.6;">
+                            {% if job.notes %}
+                                {{ job.notes }}
+                            {% else %}
+                                <span class="text-muted italic">No work notes have been logged for this service yet.</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Area -->
+            <div class="mt-5 pt-4 border-top text-center text-md-start">
+                <a href="{% url 'update_service_job' job.id %}" class="btn-update-action shadow-sm">
+                    <i class="bi bi-pencil-square me-2"></i> Edit / Update Progress
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <p class="text-muted small">GarageSys • Digital Service Record • 2025</p>
+    </div>
+</div>
+
+{% endblock %}
