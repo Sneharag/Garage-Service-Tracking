@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import VehicleForm,ServiceJobForm,PartForm,InvoiceForm,InvoicePartForm
 from .models import Vehicle,ServiceJob,Part,Invoice,InvoicePart,Payment
 from accounts.models import User
-from django.db.models import F,Sum
+from django.db.models import F,Sum,Q
 from datetime import timedelta,datetime
 from django.utils.timezone import now
 import json
@@ -279,21 +279,43 @@ def create_service_job(request):
 
 @login_required
 def service_job_list(request):
-
     user = request.user
 
+    # 1. Base QuerySet based on role
     if user.role == 'admin' or user.is_superuser:
-        jobs = ServiceJob.objects.filter(is_active=True).order_by('-created_at')
-
+        jobs = ServiceJob.objects.filter(is_active=True)
     elif user.role == 'mechanic':
-        jobs = ServiceJob.objects.filter(mechanic=request.user, is_active=True).order_by('-created_at')
-
+        jobs = ServiceJob.objects.filter(mechanic=request.user, is_active=True)
     elif user.role == 'customer':
-        jobs = ServiceJob.objects.filter(customer=request.user, is_active=True).order_by('-created_at')
+        jobs = ServiceJob.objects.filter(customer=request.user, is_active=True)
     else:
         jobs = ServiceJob.objects.none()
 
-    return render(request, 'service_job_list.html', {'jobs': jobs})
+    # 2. Get Search and Filter Parameters
+    query = request.GET.get('q')
+    status_filter = request.GET.get('status')
+
+    # 3. Apply Search Logic (Vehicle Number, Customer, or Description)
+    if query:
+        jobs = jobs.filter(
+            Q(vehicle__vehicle_number__icontains=query) |
+            Q(customer__username__icontains=query) |
+            Q(problem_description__icontains=query)
+        )
+
+    # 4. Apply Status Filter
+    if status_filter:
+        jobs = jobs.filter(status=status_filter)
+
+    # 5. Apply Ordering
+    jobs = jobs.order_by('-created_at')
+
+    return render(request, 'service_job_list.html', {
+    'jobs': jobs,
+    'search_query': query,
+    'status_filter': status_filter
+    })
+
 
 @login_required
 def service_job_detail(request, id):

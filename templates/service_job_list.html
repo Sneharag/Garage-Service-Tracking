@@ -11,6 +11,38 @@
 
     .dashboard-wrapper { padding: 1.5rem 0; }
     
+    /* Sleek Filter Bar */
+    .filter-card {
+        background: white;
+        border-radius: 1.25rem;
+        border: 1px solid rgba(0,0,0,0.05);
+        padding: 1.25rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    }
+
+    .form-search-input {
+        border-radius: 50px;
+        border: 1.5px solid #eee;
+        padding: 0.6rem 1.2rem 0.6rem 2.5rem;
+        font-size: 0.85rem;
+    }
+
+    .search-icon-inside {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #adb5bd;
+    }
+
+    .filter-select {
+        border-radius: 50px;
+        border: 1.5px solid #eee;
+        font-size: 0.85rem;
+        height: 100%;
+    }
+
     /* Page Header */
     .page-header {
         display: flex;
@@ -26,58 +58,25 @@
         letter-spacing: 1px;
         font-size: 1.1rem;
         display: flex;
-        align-items: center;
-        gap: 10px;
-        margin: 0;
+        align-items: center; gap: 10px; margin: 0;
     }
 
     /* Card & Table */
-    .card {
-        border: none;
-        border-radius: 1rem;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-        overflow: hidden;
-    }
-
-    .card-header {
-        background-color: white !important;
-        border-bottom: 1px solid #f1f1f1;
-        padding: 1.25rem;
-        font-weight: 800;
-        color: var(--brand-blue);
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        letter-spacing: 0.5px;
+    .card { border: none; border-radius: 1.25rem; box-shadow: 0 4px 20px rgba(0,0,0,0.04); overflow: hidden; }
+    .card-header { 
+        background: white !important; border-bottom: 1px solid #f1f1f1; padding: 1.25rem; 
+        font-weight: 800; color: var(--brand-blue); text-transform: uppercase; font-size: 0.8rem; 
     }
 
     .table thead th {
-        background-color: var(--soft-bg);
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        font-weight: 700;
-        letter-spacing: 1px;
-        color: #6c757d;
-        border: none;
-        padding: 1rem;
-    }
-
-    .table tbody td {
-        padding: 1rem;
-        vertical-align: middle;
-        font-size: 0.85rem;
-        color: #4a5568;
+        background-color: var(--soft-bg); font-size: 0.7rem; text-transform: uppercase;
+        font-weight: 700; letter-spacing: 1px; color: #6c757d; border: none; padding: 1rem;
     }
 
     /* Soft Status Badges */
     .badge-soft {
-        padding: 5px 12px;
-        border-radius: 50px;
-        font-weight: 700;
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
+        padding: 5px 12px; border-radius: 50px; font-weight: 700; font-size: 0.7rem;
+        text-transform: uppercase; display: inline-flex; align-items: center; gap: 5px;
     }
     .badge-pending { background: rgba(255, 193, 7, 0.15); color: #b58900; }
     .badge-progress { background: rgba(13, 110, 253, 0.1); color: #0d6efd; }
@@ -85,38 +84,21 @@
 
     /* Action Buttons */
     .btn-action {
-        width: 32px;
-        height: 32px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-        font-size: 0.85rem;
-        transition: 0.2s;
-        text-decoration: none;
-        border: none;
+        width: 32px; height: 32px; display: inline-flex; align-items: center;
+        justify-content: center; border-radius: 8px; font-size: 0.85rem; transition: 0.2s;
     }
     .btn-view { background: rgba(33, 30, 72, 0.1); color: var(--brand-blue); }
     .btn-view:hover { background: var(--brand-blue); color: white; }
-
     .btn-edit { background: rgba(255, 193, 7, 0.15); color: #b58900; }
     .btn-edit:hover { background: var(--brand-orange); color: var(--brand-blue); }
-
     .btn-delete { background: rgba(220, 53, 69, 0.1); color: #dc3545; }
     .btn-delete:hover { background: #dc3545; color: white; }
 
-    .btn-add {
-        background: var(--brand-blue);
-        color: white;
-        font-weight: 700;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        padding: 0.6rem 1.2rem;
-        border-radius: 50px;
-        transition: 0.3s;
-        border: none;
+    .btn-apply {
+        background: var(--brand-blue); color: white; border-radius: 50px;
+        font-weight: 700; font-size: 0.8rem; padding: 0.6rem 2rem;
     }
-    .btn-add:hover { background: var(--brand-orange); color: var(--brand-blue); transform: translateY(-2px); }
+    .btn-apply:hover { background: var(--brand-orange); color: var(--brand-blue); }
 </style>
 
 <div class="dashboard-wrapper container-fluid px-3">
@@ -124,19 +106,47 @@
     <!-- PAGE HEADER -->
     <div class="page-header">
         <h1 class="page-title">
-            <i class="bi bi-tools"></i> Service Operations
+            <i class="bi bi-tools text-orange"></i> Service Queue
         </h1>
         {% if request.user.role == 'admin' %}
-        <a href="{% url 'create_service_job' %}" class="btn-add text-decoration-none">
+        <a href="{% url 'create_service_job' %}" class="btn-apply text-decoration-none shadow-sm">
             <i class="bi bi-plus-lg me-1"></i> New Service Job
         </a>
         {% endif %}
     </div>
 
+    <!-- 🔍 SEARCH & FILTER SECTION -->
+    <div class="filter-card">
+        <form method="GET" class="row g-3">
+            <div class="col-md-5 position-relative">
+                <i class="bi bi-search search-icon-inside"></i>
+                <input type="text" name="q" class="form-control form-search-input" 
+                       placeholder="Search Plate # or Customer..." value="{{ search_query|default:'' }}">
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select filter-select">
+                    <option value="">All Statuses</option>
+                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="in_progress" {% if status_filter == 'in_progress' %}selected{% endif %}>In Progress</option>
+                    <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+                </select>
+            </div>
+            <div class="col-md-4 d-flex gap-2">
+                <button type="submit" class="btn btn-apply flex-grow-1">Filter Records</button>
+                <a href="{% url 'service_job_list' %}" class="btn btn-light rounded-pill border px-3" title="Reset Filters">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+
     <!-- TABLE CARD -->
     <div class="card">
-        <div class="card-header">
-            ACTIVE & RECENT SERVICE LOGS
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>SERVICE LOGS</span>
+            <span class="badge bg-light text-muted fw-normal border px-3 py-2 rounded-pill" style="font-size: 0.7rem;">
+                Showing {{ jobs.count }} entries
+            </span>
         </div>
 
         <div class="table-responsive">
@@ -158,13 +168,11 @@
                 <tbody>
                     {% for job in jobs %}
                     <tr>
-                        <!-- VEHICLE & JOB ID -->
                         <td class="ps-4">
-                            <div class="fw-bold text-dark">{{ job.vehicle }}</div>
-                            <div class="text-muted small" style="font-size: 0.7rem;">JOB #{{ job.id|stringformat:"04d" }}</div>
+                            <div class="fw-bold text-dark">{{ job.vehicle.vehicle_number }}</div>
+                            <div class="text-muted small" style="font-size: 0.7rem;">{{ job.vehicle.model }}</div>
                         </td>
 
-                        <!-- CUSTOMER (ADMIN ONLY) -->
                         {% if request.user.role == 'admin' %}
                         <td>
                             <div class="small fw-semibold text-secondary">
@@ -173,7 +181,6 @@
                         </td>
                         {% endif %}
 
-                        <!-- MECHANIC -->
                         {% if request.user.role != 'customer' %}
                         <td>
                             {% if job.mechanic %}
@@ -181,12 +188,11 @@
                                     <i class="bi bi-wrench-adjustable me-1 text-muted"></i>{{ job.mechanic.username }}
                                 </div>
                             {% else %}
-                                <span class="text-muted italic small">Not Assigned</span>
+                                <span class="text-muted italic small opacity-50">Not Assigned</span>
                             {% endif %}
                         </td>
                         {% endif %}
 
-                        <!-- STATUS BADGES -->
                         <td>
                             {% if job.status == 'pending' %}
                                 <span class="badge-soft badge-pending"><i class="bi bi-dot fs-4"></i>Pending</span>
@@ -197,32 +203,23 @@
                             {% endif %}
                         </td>
 
-                        <!-- DATE -->
                         <td class="text-muted small">
                             {{ job.created_at|date:"M d, Y" }}
                         </td>
 
-                        <!-- ACTIONS -->
                         <td class="text-end pe-4">
                             <div class="d-flex justify-content-end gap-2">
-                                <!-- VIEW LOGIC -->
-                                {% if request.user.role == 'mechanic' %}
-                                    <a href="{% url 'mechanic_job_detail' job.id %}" class="btn-action btn-view" title="View Details">
-                                        <i class="bi bi-eye-fill"></i>
-                                    </a>
-                                {% else %}
-                                    <a href="{% url 'service_job_detail' job.id %}" class="btn-action btn-view" title="View Details">
-                                        <i class="bi bi-eye-fill"></i>
-                                    </a>
-                                {% endif %}
+                                <a href="{% if request.user.role == 'mechanic' %}{% url 'mechanic_job_detail' job.id %}{% else %}{% url 'service_job_detail' job.id %}{% endif %}" 
+                                   class="btn-action btn-view" title="View Details">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
 
-                                <!-- ADMIN ONLY ACTIONS -->
                                 {% if request.user.role == 'admin' %}
                                     <a href="{% url 'update_service_job' job.id %}" class="btn-action btn-edit" title="Edit Job">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
                                     <a href="{% url 'delete_service_job' job.id %}" class="btn-action btn-delete" title="Delete Job"
-                                       onclick="return confirm('Are you sure you want to delete this job?')">
+                                       onclick="return confirm('Archive this service record?')">
                                         <i class="bi bi-trash3-fill"></i>
                                     </a>
                                 {% endif %}
@@ -232,10 +229,8 @@
                     {% empty %}
                     <tr>
                         <td colspan="6" class="text-center py-5">
-                            <div class="opacity-25 mb-2">
-                                <i class="bi bi-tools" style="font-size: 3rem;"></i>
-                            </div>
-                            <p class="text-muted fw-bold">No service jobs currently found.</p>
+                            <div class="opacity-25 mb-2"><i class="bi bi-search" style="font-size: 3rem;"></i></div>
+                            <p class="text-muted fw-bold">No results found for your search.</p>
                         </td>
                     </tr>
                     {% endfor %}
@@ -244,5 +239,4 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
