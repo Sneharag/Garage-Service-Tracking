@@ -44,10 +44,38 @@
     border-color: #ffc107;
     color: #ffc107;
 }
+.back-home-link {
+    text-decoration: none;
+    color: #211e48;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.back-home-link:hover {
+    color: #ffc107;
+    transform: translateX(-5px); /* Subtle nudge to the left on hover */
+}
+
+/* Ensure the position absolute doesn't get squashed on mobile */
+@media (max-width: 576px) {
+    .back-home-link {
+        font-size: 0.75rem;
+    }
+}
     </style>
 </head>
 <body>
-
+<!-- 🏠 Back to Home Link -->
+<div class="position-absolute top-0 start-0 p-4">
+    <a href="{% url 'home' %}" class="back-home-link">
+        <i class="bi bi-arrow-left me-1"></i> Back to Home
+    </a>
+</div>
 <div class="container">
     <div class="card login-card p-4">
         <div class="text-center mb-4">
