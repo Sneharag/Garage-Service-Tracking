@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .edit-container { min-height: 80vh; display: flex; align-items: center; justify-content: center; }
+    .edit-card { max-width: 400px; width: 100%; border: none; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    .btn-save { background: #ffc107; color: #211e48; font-weight: 700; border: none; }
+    .form-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #211e48; }
+</style>
+
+<div class="edit-container">
+    <div class="card edit-card p-4">
+        <div class="text-center mb-4">
+            <h4 class="fw-bold" style="color: #211e48;">Edit Profile</h4>
+            <p class="text-muted small">Update your personal information</p>
+        </div>
+
+        <!-- IMPORTANT: enctype="multipart/form-data" for images -->
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                {{ form.username }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email Address</label>
+                {{ form.email }}
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Profile Picture</label>
+                {{ form.profile_picture }}
+                {% if user.profile_picture %}
+                <div class="mt-2 small text-muted">Current: <a href="{{ user.profile_picture.url }}" target="_blank">View existing</a></div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-save w-100 py-2">Save Changes</button>
+            <a href="{% url 'profile' %}" class="btn btn-link w-100 text-muted text-decoration-none small mt-2">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

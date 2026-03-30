@@ -237,7 +237,7 @@
     </div>
 
     <div class="row g-4">
-      {% for review in testimonials %}
+      {% for review in testimonials|slice:":3" %}
       <div class="col-md-4">
         <div class="testimonial-item p-4 rounded-4 border h-100 transition-hover bg-white shadow-sm">
           <!-- Dynamic Stars -->

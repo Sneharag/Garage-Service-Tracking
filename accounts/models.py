@@ -8,4 +8,5 @@ class User(AbstractUser):
         ('customer','Customer'),
     )
     role=models.CharField(max_length=100,choices= ROLE_CHOICES)
+    profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
 

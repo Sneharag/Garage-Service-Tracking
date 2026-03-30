@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
-from .forms import SignupForm,UserCreateForm
+from .forms import SignupForm,UserCreateForm,UserProfileForm
 from .models import User
 
 def user_login(request):
@@ -140,4 +140,18 @@ def forgot_password(request):
         })
 
     return render(request, 'forgot_password.html')
+
+# accounts/views.py
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        # request.FILES is crucial for the image upload
+        form = UserProfileForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = UserProfileForm(instance=request.user)
+
+    return render(request, 'edit_profile.html', {'form': form})
 

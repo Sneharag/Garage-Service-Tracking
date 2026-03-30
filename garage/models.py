@@ -44,6 +44,8 @@ class ServiceJob(models.Model):
     def can_delete(self):
         return self.status == 'completed' and self.created_at < now() - timedelta(days=3)
 
+
+
 class Part(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)

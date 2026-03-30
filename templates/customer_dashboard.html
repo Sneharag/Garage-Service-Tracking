@@ -9,13 +9,13 @@
         --soft-bg: #f8f9fa;
     }
 
-    .dashboard-wrapper { padding: 1.5rem 0; }
+    .dashboard-wrapper { padding: 1rem 0; }
     
     .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem; /* Reduced margin */
     }
 
     .page-title {
@@ -29,161 +29,127 @@
         gap: 10px;
     }
 
+    /* 🟢 NEW: Sleek Maintenance Notification Bar */
+    .maintenance-alert {
+        background: #fff;
+        border-left: 4px solid var(--brand-orange);
+        border-radius: 12px;
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        margin-bottom: 2rem;
+    }
+
+    .alert-label {
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--brand-orange);
+        letter-spacing: 1px;
+        display: block;
+    }
+
+    .alert-text {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--brand-blue);
+    }
+
     /* Stat Cards */
     .stat-card {
         background: white;
         border: 1px solid rgba(0,0,0,0.05);
-        border-radius: 1.25rem;
-        padding: 1.5rem;
+        border-radius: 1rem;
+        padding: 1.25rem;
         transition: transform 0.3s ease;
         height: 100%;
     }
 
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    }
-
-    .stat-number {
-        font-size: 1.75rem;
-        font-weight: 800;
-        color: var(--brand-blue);
-    }
-
-    .stat-icon-box {
-        width: 45px;
-        height: 45px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-    }
-
-    .bg-orange-soft { background: rgba(255, 193, 7, 0.15); color: #b58900; }
-    .bg-blue-soft { background: rgba(13, 110, 253, 0.1); color: #0d6efd; }
-    .bg-green-soft { background: rgba(25, 135, 84, 0.1); color: #198754; }
+    .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    .stat-number { font-size: 1.5rem; font-weight: 800; color: var(--brand-blue); }
+    .stat-icon-box { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    
+    .bg-orange-soft { background: rgba(255, 193, 7, 0.12); color: #b58900; }
+    .bg-blue-soft { background: rgba(13, 110, 253, 0.08); color: #0d6efd; }
+    .bg-green-soft { background: rgba(25, 135, 84, 0.08); color: #198754; }
 
     /* Card & Table */
-    .card {
-        border: none;
-        border-radius: 1.25rem;
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    }
+    .card { border: none; border-radius: 1rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); }
+    .card-header { background: white !important; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 1rem 1.25rem; font-weight: 700; color: var(--brand-blue); text-transform: uppercase; font-size: 0.8rem; }
+    .badge-pill-soft { padding: 4px 10px; border-radius: 50px; font-weight: 600; font-size: 0.7rem; }
 
-    .card-header {
-        background: white !important;
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-        padding: 1.25rem;
-        font-weight: 700;
-        color: var(--brand-blue);
-        text-transform: uppercase;
-        font-size: 0.85rem;
-    }
-
-    .badge-pill-soft {
-        padding: 5px 12px;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 0.75rem;
-    }
-
-    /* Add Vehicle Button */
     .btn-add {
         background: var(--brand-orange);
         color: var(--brand-blue);
         font-weight: 700;
-        border: none;
-        padding: 10px 20px;
+        padding: 8px 18px;
         border-radius: 50px;
-        transition: 0.3s;
-    }
-
-    .btn-add:hover {
-        background: var(--brand-blue);
-        color: white;
+        font-size: 0.85rem;
+        text-decoration: none;
     }
 </style>
 
 <div class="dashboard-wrapper">
     <!-- Header -->
     <div class="page-header">
-        <div>
-            <div class="page-title">
-              <i class="bi bi-house-door-fill text-orange"></i>
-                <!-- <i class="bi bi-speedometer2 text-orange"></i> -->
-                <!-- My Dashboard -->
-            </div>
-            <!-- <p class="text-muted small mb-0">Welcome, <strong>{{ request.user.username }}</strong></p> -->
+        <div class="page-title">
+            <i class="bi bi-house-door-fill text-orange"></i>
+            My Dashboard
         </div>
-        <div>
-            <!-- Main Action moved to Header -->
-            <a href="{% url 'add_vehicle' %}" class="btn-add text-decoration-none">
-                <i class="bi bi-plus-lg me-2"></i>Add Vehicle
-            </a>
-        </div>
+        <a href="{% url 'add_vehicle' %}" class="btn-add">
+            <i class="bi bi-plus-lg me-1"></i>Add Vehicle
+        </a>
     </div>
+
+    <!-- 🟢 NEW: Clean Notification Bar instead of Banner -->
+    {% if jobs.first.next_service_date %}
+    <div class="maintenance-alert">
+        <div class="d-flex align-items-center gap-3">
+            <div class="icon-box bg-orange-soft p-2 rounded-3">
+                <i class="bi bi-calendar-check-fill"></i>
+            </div>
+            <div>
+                <span class="alert-label">Maintenance Reminder</span>
+                <span class="alert-text">Your next service for {{jobs.first.vehicle.vehicle_number}} is recommended by 
+                    <span class="text-primary">{{ jobs.first.next_service_date|date:"d M, Y" }}</span></span>
+            </div>
+        </div>
+        <!-- <a href="{% url 'services' %}" class="btn btn-sm btn-outline-dark rounded-pill px-3 fw-bold" style="font-size: 0.7rem;">Book Now</a> -->
+    </div>
+    {% endif %}
 
     <!-- Stat Cards -->
-    <div class="row g-4 mb-4">
-        <div class="col-md-4">
-            <div class="stat-card">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <div class="stat-icon-box bg-orange-soft">
-                        <i class="bi bi-car-front"></i>
-                    </div>
-                    <span class="text-muted small fw-bold">VEHICLES</span>
-                </div>
-                <div class="stat-number">{{ total_vehicles }}</div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="stat-card">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <div class="stat-icon-box bg-blue-soft">
-                        <i class="bi bi-tools"></i>
-                    </div>
-                    <span class="text-muted small fw-bold">TOTAL JOBS</span>
-                </div>
-                <div class="stat-number">{{ total_jobs }}</div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="stat-card">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <div class="stat-icon-box bg-green-soft">
-                        <i class="bi bi-check2-circle"></i>
-                    </div>
-                    <span class="text-muted small fw-bold">ACTIVE</span>
-                </div>
-                <div class="stat-number">{{ active_jobs }}</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mb-4">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background: linear-gradient(135deg, #211e48, #3a357a); color: white;">
-            <div class="card-body p-4 d-flex align-items-center justify-content-between">
+    <div class="row row-cols-1 row-cols-md-3 g-3 mb-4">
+        <div class="col">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon-box bg-orange-soft"><i class="bi bi-car-front"></i></div>
                 <div>
-                    <h6 class="text-orange fw-bold text-uppercase small mb-1" style="letter-spacing: 1px;">Maintenance Reminder</h6>
-                    <h4 class="fw-bold mb-0">Your next service is recommended by</h4>
-                    <p class="mb-0 opacity-75">Keep your vehicle in top condition with regular checkups.</p>
+                    <div class="text-muted small fw-bold uppercase">Vehicles</div>
+                    <div class="stat-number">{{ total_vehicles }}</div>
                 </div>
-                <div class="text-end">
-                    <div class="display-6 fw-bold text-orange">
-                        {% if jobs.first.next_service_date %}
-                            {{ jobs.first.next_service_date|date:"M d, Y" }}
-                        {% else %}
-                            -- --, ----
-                        {% endif %}
-                    </div>
-                    <span class="badge bg-white text-navy rounded-pill px-3 py-2 mt-2 fw-bold">Save the date</span>
+            </div>
+        </div>
+        <div class="col">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon-box bg-blue-soft"><i class="bi bi-tools"></i></div>
+                <div>
+                    <div class="text-muted small fw-bold uppercase">Total Jobs</div>
+                    <div class="stat-number">{{ total_jobs }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon-box bg-green-soft"><i class="bi bi-check2-circle"></i></div>
+                <div>
+                    <div class="text-muted small fw-bold uppercase">Active</div>
+                    <div class="stat-number">{{ active_jobs }}</div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
     <div class="row g-4">
         <!-- Main Content: Recent Jobs -->
@@ -191,15 +157,15 @@
             <div class="card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span><i class="bi bi-list-task me-2 text-orange"></i>Recent Services</span>
-                    <a href="{% url 'service_job_list' %}" class="btn btn-link btn-sm text-decoration-none text-orange fw-bold">View History</a>
+                    <a href="{% url 'service_job_list' %}" class="text-orange fw-bold text-decoration-none small">View All</a>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
+                    <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
                         <thead>
                             <tr class="bg-light">
-                                <th class="ps-4 py-3 small fw-bold text-muted border-0">VEHICLE</th>
-                                <th class="py-3 small fw-bold text-muted border-0 text-center">STATUS</th>
-                                <th class="py-3 small fw-bold text-muted border-0 text-end pe-4">ACTION</th>
+                                <th class="ps-4 py-3 border-0">VEHICLE</th>
+                                <th class="py-3 text-center border-0">STATUS</th>
+                                <th class="py-3 text-end pe-4 border-0">ACTION</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -207,15 +173,15 @@
                             <tr>
                                 <td class="ps-4">
                                     <div class="fw-bold text-dark">{{ job.vehicle }}</div>
-                                    <div class="small text-muted">{{ job.problem_description|truncatechars:30 }}</div>
+                                    <div class="small text-muted">{{ job.problem_description|truncatechars:40 }}</div>
                                 </td>
                                 <td class="text-center">
                                     {% if job.status == 'pending' %}
                                         <span class="badge-pill-soft bg-orange-soft">Pending</span>
                                     {% elif job.status == 'in_progress' %}
-                                        <span class="badge-pill-soft bg-blue-soft">In Progress</span>
+                                        <span class="badge-pill-soft bg-blue-soft">Progress</span>
                                     {% else %}
-                                        <span class="badge-pill-soft bg-green-soft">Completed</span>
+                                        <span class="badge-pill-soft bg-green-soft">Done</span>
                                     {% endif %}
                                 </td>
                                 <td class="text-end pe-4">
@@ -223,9 +189,7 @@
                                 </td>
                             </tr>
                             {% empty %}
-                            <tr>
-                                <td colspan="3" class="text-center py-5 text-muted">No records found.</td>
-                            </tr>
+                            <tr><td colspan="3" class="text-center py-5 text-muted">No records.</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -236,41 +200,26 @@
         <!-- Sidebar: Status Tracker -->
         <div class="col-lg-4">
             <div class="card h-100">
-                <div class="card-header border-0"><i class="bi bi-bar-chart-fill me-2 text-orange"></i>Overall Progress</div>
+                <div class="card-header border-0">Job Progress</div>
                 <div class="card-body">
-                    <p class="text-muted small mb-4">Summary of all your vehicle service requests.</p>
-                    
-                    <!-- Pending -->
+                    <!-- Progress items remain the same as your previous code -->
                     <div class="mb-4">
                         <div class="d-flex justify-content-between small fw-bold mb-2">
-                            <span><i class="bi bi-clock me-1 text-warning"></i> Pending</span>
-                            <span>{{ pending_jobs }}</span>
+                            <span>Pending</span><span>{{ pending_jobs }}</span>
                         </div>
-                        <div class="progress" style="height: 8px; border-radius: 10px;">
-                            <div class="progress-bar bg-warning" style="width: {% if total_jobs %}{% widthratio pending_jobs total_jobs 100 %}{% else %}0{% endif %}%"></div>
-                        </div>
+                        <div class="progress" style="height: 6px;"><div class="progress-bar bg-warning" style="width: {% if total_jobs %}{% widthratio pending_jobs total_jobs 100 %}{% else %}0{% endif %}%"></div></div>
                     </div>
-
-                    <!-- Progress -->
                     <div class="mb-4">
                         <div class="d-flex justify-content-between small fw-bold mb-2">
-                            <span><i class="bi bi-gear-wide-connected me-1 text-primary"></i> In Progress</span>
-                            <span>{{ inprogress_jobs }}</span>
+                            <span>In Progress</span><span>{{ inprogress_jobs }}</span>
                         </div>
-                        <div class="progress" style="height: 8px; border-radius: 10px;">
-                            <div class="progress-bar bg-primary" style="width: {% if total_jobs %}{% widthratio inprogress_jobs total_jobs 100 %}{% else %}0{% endif %}%"></div>
-                        </div>
+                        <div class="progress" style="height: 6px;"><div class="progress-bar bg-primary" style="width: {% if total_jobs %}{% widthratio inprogress_jobs total_jobs 100 %}{% else %}0{% endif %}%"></div></div>
                     </div>
-
-                    <!-- Completed -->
-                    <div class="mb-4">
+                    <div class="mb-0">
                         <div class="d-flex justify-content-between small fw-bold mb-2">
-                            <span><i class="bi bi-check-circle me-1 text-success"></i> Completed</span>
-                            <span>{{ completed_jobs }}</span>
+                            <span>Completed</span><span>{{ completed_jobs }}</span>
                         </div>
-                        <div class="progress" style="height: 8px; border-radius: 10px;">
-                            <div class="progress-bar bg-success" style="width: {% if total_jobs %}{% widthratio completed_jobs total_jobs 100 %}{% else %}0{% endif %}%"></div>
-                        </div>
+                        <div class="progress" style="height: 6px;"><div class="progress-bar bg-success" style="width: {% if total_jobs %}{% widthratio completed_jobs total_jobs 100 %}{% else %}0{% endif %}%"></div></div>
                     </div>
                 </div>
             </div>

@@ -338,6 +338,24 @@ def update_service_job(request, id):
         if est_time:
             job.estimated_completion = est_time
 
+        if user.role == 'admin':
+            # 1. Reassign Vehicle if changed
+            vehicle_id = request.POST.get('vehicle')
+            if vehicle_id:
+                job.vehicle = get_object_or_404(Vehicle, pk=vehicle_id)
+
+            # 2. Reassign Mechanic if changed
+            mechanic_id = request.POST.get('mechanic')
+            if mechanic_id:
+                # Assign the new mechanic
+                job.mechanic = get_object_or_404(User, pk=mechanic_id)
+            else:
+                # Handle the "No Mechanic Assigned" option
+                job.mechanic = None
+
+            # 3. Update Problem Description if changed
+            job.problem_description = request.POST.get('problem_description')
+
         if new_status == 'completed':
             # ✅ Change: Check if the date is NOT set yet
             if not job.warranty_expiry:
@@ -600,6 +618,8 @@ def payment_handler(request):
             invoice.payment_status = 'paid'
             invoice.save()
 
+            storage = messages.get_messages(request)
+            storage.used = True # This clears any existing "stuck" messages
             # 3. Add a success message for the user
             messages.success(request, f"Payment of ₹{invoice.grand_total()} was successful! Your invoice is now marked as Paid.")
 

@@ -94,16 +94,39 @@
     .team-card { text-align: center; }
     .team-img { width: 120px; height: 120px; border-radius: 30px; object-fit: cover; margin-bottom: 15px; border: 4px solid var(--soft-bg); }
 
-    .btn-cta-about {
-        background: var(--brand-orange);
-        color: var(--brand-blue);
-        font-weight: 700;
-        padding: 12px 30px;
-        border-radius: 50px;
-        text-decoration: none;
-        transition: 0.3s;
+    .btn-cta-about, .btn-join-custom  {
+        display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 46px; /* Uniform height for both */
+    padding: 0 30px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: 0.3s;
+    white-space: nowrap;
     }
-    .btn-cta-about:hover { background: var(--brand-blue); color: white; }
+    .btn-cta-about {
+    background: var(--brand-orange);
+    color: var(--brand-blue);
+    border: none;
+}
+.btn-cta-about:hover {
+    background: var(--brand-blue);
+    color: white;
+}
+
+/* Custom Outline Style to match height */
+.btn-join-custom {
+    border: 2px solid var(--brand-blue);
+    color: var(--brand-blue);
+    background: transparent;
+}
+.btn-join-custom:hover {
+    background: var(--brand-blue);
+    color: white;
+}
 </style>
 
 <!-- Hero Section -->
@@ -209,7 +232,7 @@
         <p class="text-muted mb-4 mx-auto" style="max-width: 500px;">Join thousands of vehicle owners who trust GarageSys for their maintenance needs.</p>
         <div class="d-flex justify-content-center gap-3">
             <a href="{% url 'services' %}" class="btn-cta-about">Explore Services</a>
-            <a href="{% url 'signup' %}" class="btn btn-outline-dark rounded-pill px-4 fw-bold">Join Now</a>
+            <a href="{% url 'signup' %}" class="btn btn-outline-dark rounded-pill px-4 fw-bold btn-join-custom">Join Now</a>
         </div>
     </div>
 </div>

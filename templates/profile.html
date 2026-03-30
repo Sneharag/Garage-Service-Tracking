@@ -94,10 +94,14 @@
 <div class="profile-container">
     <div class="card profile-card p-4 p-md-5">
         <div class="text-center">
-            
+
             <!-- Professional Initials Avatar -->
-            <div class="avatar-circle">
+            <div class="avatar-circle overflow-hidden">
+                {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" style="width:100%; height:100%; object-fit:cover;">
+                {% else %}
                 {{ user.username|first|upper }}
+                {% endif %}
             </div>
 
             <h3 class="fw-bold mb-1" style="color: var(--brand-blue);">{{ user.username }}</h3>
@@ -110,18 +114,52 @@
             <hr class="opacity-10 mb-4">
 
             <!-- User Details -->
+
             <div class="text-start ps-3">
                 <div class="profile-label">Email Address</div>
                 <div class="profile-value">{{ user.email }}</div>
 
-                <div class="profile-label">Account Status</div>
-                <div class="profile-value text-success">
-                    <i class="bi bi-check-circle-fill me-1"></i> Verified Active
+                {% if user.role == 'customer' %}
+                <div class="profile-label">Your Registered Vehicles</div>
+                <div class="mt-2 mb-4">
+                    <!-- Make sure the loop is exactly like this -->
+                    {% for vehicle in user.vehicle_set.all %}
+                    <div
+                        class="d-flex align-items-center justify-content-between mb-3 p-3 rounded-4 bg-white border shadow-sm">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-orange-soft p-2 rounded-3 text-orange">
+                                <i class="bi bi-car-front-fill fs-5"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-navy" style="font-size: 0.9rem;">{{ vehicle.model }}</div>
+                                <div class="text-muted small">{{ vehicle.company }}</div>
+                            </div>
+                        </div>
+
+                        <!-- 🏎️ Professional License Plate Style -->
+                        <div class="license-plate">
+                            {{ vehicle.vehicle_number }}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-muted small fst-italic p-3 border rounded-4 text-center bg-light">
+                        <i class="bi bi-info-circle me-1"></i> No vehicles registered yet.
+                    </div>
+                    {% endfor %}
                 </div>
+                {% endif %}
+
+                <!-- MECHANIC/ADMIN SPECIFIC: Show status instead -->
+                {% if user.role != 'customer' %}
+                <div class="profile-label">System Status</div>
+                <div class="profile-value text-success">
+                    <i class="bi bi-patch-check-fill me-1"></i> Authorized {{ user.role|capfirst }}
+                </div>
+                {% endif %}
             </div>
 
             <div class="mt-4">
-                <a href="#" class="btn btn-edit-profile shadow-sm">
+                <a href="{% url 'edit_profile' %}" class="btn btn-edit-profile shadow-sm">
                     <i class="bi bi-pencil-square me-2"></i> Edit Profile
                 </a>
             </div>
